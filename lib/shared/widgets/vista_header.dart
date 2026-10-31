@@ -20,7 +20,7 @@ class VistaNote extends StatelessWidget {
     required this.message,
     required this.isDarkMode,
     this.tone = NoteTone.calm,
-    this.mascotAsset = 'assets/vista-icons/vista0.webp',
+    this.mascotAsset = 'assets/vista-icons/vista-welcome.png',
     this.margin = const EdgeInsets.symmetric(horizontal: 20),
   });
 
