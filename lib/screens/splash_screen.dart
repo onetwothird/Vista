@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:seelai_app/shared/widgets/vista_sky.dart';
+import 'package:seelai_app/themes/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seelai_app/screens/onboarding_screen.dart';
 import 'package:seelai_app/firebase/database_service.dart';
@@ -119,18 +121,64 @@ class _AnimatedSplashScreenWidgetState extends State<AnimatedSplashScreenWidget>
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.sizeOf(context).height;
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Center(
-          child: Image.asset(
-            'assets/vista-icons/vista_loaders.gif',
-            width: 500,
-            height: 1000,
-            fit: BoxFit.contain,
+      backgroundColor: Palette.violetDeep,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: VistaSkyPainter(t: 0.2, page: 0, horizon: height),
+            ),
           ),
-        ),
+          FadeTransition(
+            opacity: _fadeAnimation,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 148,
+                    height: 148,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(color: Palette.honey, width: 4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Palette.tealBright.withValues(alpha: 0.35),
+                          blurRadius: 40,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(36),
+                      child: Image.asset(
+                        'assets/vista_app_logo/vista_app_logo.jpg',
+                        fit: BoxFit.cover,
+                        cacheWidth: 400,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Vista',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 40,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Your guide pup for everyday sight',
+                    style: TextStyle(color: Palette.nightMuted, fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
