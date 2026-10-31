@@ -662,7 +662,7 @@ class _ViewRecentActivitiesState extends State<ViewRecentActivities>
     return VistaNote(
       message: _getMascotMessages(faceCount, objectCount, textCount).first,
       isDarkMode: widget.isDarkMode,
-      mascotAsset: 'assets/vista-icons/vista3.webp',
+      mascotAsset: 'assets/vista-icons/vista-preloader.png',
     );
   }
 
