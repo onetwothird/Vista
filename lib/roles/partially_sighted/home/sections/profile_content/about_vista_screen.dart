@@ -183,7 +183,7 @@ class _AboutVistaScreenState extends State<AboutVistaScreen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(28.0),
                             child: Image.asset(
-                              'assets/vista_app_logo/vista_app_logo.webp',
+                              'assets/vista_app_logo/vista_app_logo.jpg',
                               fit: BoxFit
                                   .cover, // Removes the awkward white box-in-box look
                               errorBuilder: (context, error, stackTrace) =>
