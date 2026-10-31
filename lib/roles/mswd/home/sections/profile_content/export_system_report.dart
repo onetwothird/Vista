@@ -79,7 +79,7 @@ class _ExportSystemReportScreenState extends State<ExportSystemReportScreen> {
       pw.MemoryImage? logoImage;
       try {
         final ByteData bytes = await rootBundle.load(
-          'assets/vista_app_logo/vista_app_logo.webp',
+          'assets/vista_app_logo/vista_app_logo.jpg',
         );
         logoImage = pw.MemoryImage(bytes.buffer.asUint8List());
       } catch (e) {
