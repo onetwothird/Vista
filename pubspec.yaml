@@ -69,7 +69,6 @@ flutter:
     # Include Vista icons directory (WebP/PNG as present)
     - assets/vista-icons/
 
-    - assets/onboarding_icons/
     - assets/vista_app_logo/
     - assets/how-to-use-vista_images/partially_sighted/
     - assets/how-to-use-vista_images/caretaker/
@@ -90,13 +89,18 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-
-  image_path: "assets/vista_app_logo/vista_app_logo.webp"
-
-  adaptive_icon_background: "#6140AB"
-  adaptive_icon_foreground: "assets/vista_app_logo/vista_app_logo.webp"
+  remove_alpha_ios: true
+  image_path: "assets/vista_app_logo/vista_app_logo.jpg"
+  adaptive_icon_background: "#FDEEA4"
+  adaptive_icon_foreground: "assets/vista_app_logo/vista_app_logo.jpg"
+  adaptive_icon_foreground_inset: 16
+  web:
+    generate: true
+    image_path: "assets/vista_app_logo/vista_app_logo.jpg"
+    background_color: "#FDEEA4"
+    theme_color: "#13223A"
 
 flutter_native_splash:
-  color: "#F6F5F9"
+  color: "#13223A"
   android: true
   ios: true
