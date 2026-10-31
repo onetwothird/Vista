@@ -746,7 +746,7 @@ class _ContactsContentState extends State<ContactsContent>
     return VistaNote(
       message: _getMascotMessages().first,
       isDarkMode: widget.isDarkMode,
-      mascotAsset: 'assets/vista-icons/vista2.webp',
+      mascotAsset: 'assets/vista-icons/vista-signin.png',
     );
   }
 
