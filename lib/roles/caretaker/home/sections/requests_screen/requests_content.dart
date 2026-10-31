@@ -560,7 +560,7 @@ class _RequestsContentState extends State<RequestsContent>
     return VistaNote(
       message: _getMascotMessages().first,
       isDarkMode: widget.isDarkMode,
-      mascotAsset: 'assets/vista-icons/vista4.webp',
+      mascotAsset: 'assets/vista-icons/vista-celebrating.png',
     );
   }
 
