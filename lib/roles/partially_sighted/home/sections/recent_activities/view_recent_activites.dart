@@ -12,6 +12,8 @@ import 'detection_detail_screen.dart';
 import 'all_detections_screen.dart';
 
 import 'package:seelai_app/shared/widgets/vista_header.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class ViewRecentActivities extends StatefulWidget {
   final bool isDarkMode;
@@ -97,7 +99,7 @@ class _ViewRecentActivitiesState extends State<ViewRecentActivities>
 
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
   }
 
   void _setupRealtimeStreams() {
@@ -511,105 +513,75 @@ class _ViewRecentActivitiesState extends State<ViewRecentActivities>
           child: SlideTransition(
             position: _headerSlide,
             child: Padding(
-              padding: EdgeInsets.only(
-                left: width * 0.06,
-                right: width * 0.06,
-                top: spacingLarge,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          'Recent Detections',
-                          maxLines: 1, // Forces text onto a single line
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w700,
-                            color: widget.theme.textColor,
-                            letterSpacing: -0.5,
+                        Semantics(
+                          header: true,
+                          child: Text(
+                            'History',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 30,
+                              height: 1.15,
+                              fontWeight: FontWeight.w700,
+                              color: widget.theme.textColor,
+                              letterSpacing: -0.5,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Text(
-                          'Your scanning history',
-                          maxLines: 1,
+                          'What Vista has scanned for you',
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 15,
                             color: widget.theme.subtextColor,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      PremiumThemeToggle(
-                        isDarkMode: widget.isDarkMode,
-                        onToggle: widget.onToggleDarkMode,
-                        buttonBgColor: widget.isDarkMode
-                            ? Colors.white10
-                            : Palette.paper,
-                        iconColor: _primaryColor,
+                  IconButton(
+                    onPressed: _refreshDetections,
+                    tooltip: 'Refresh history',
+                    style: IconButton.styleFrom(
+                      backgroundColor: Palette.card(widget.isDarkMode),
+                      side: BorderSide(
+                        color: Palette.border(widget.isDarkMode),
                       ),
-                      const SizedBox(width: 6),
-                      Semantics(
-                        label: 'Refresh detections',
-                        button: true,
-                        hint: 'Double tap to refresh',
-                        child: GestureDetector(
-                          onTap: _refreshDetections,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: widget.isDarkMode
-                                  ? Colors.white10
-                                  : Palette.paper,
-                              shape: BoxShape.circle,
-                            ),
-                            child: AnimatedRotation(
-                              turns: _isRefreshing ? 1 : 0,
-                              duration: const Duration(milliseconds: 600),
-                              child: Icon(
-                                Icons.refresh_rounded,
-                                color: _primaryColor,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                        ),
+                      minimumSize: const Size(48, 48),
+                    ),
+                    icon: AnimatedRotation(
+                      turns: _isRefreshing ? 1 : 0,
+                      duration: const Duration(milliseconds: 600),
+                      child: Icon(
+                        Icons.refresh_rounded,
+                        color: Palette.text(widget.isDarkMode),
                       ),
-                      const SizedBox(width: 8),
-                      // Clear History Top Header Button
-                      Semantics(
-                        label: 'Clear history',
-                        button: true,
-                        hint: 'Double tap to clear history',
-                        child: GestureDetector(
-                          onTap: _showClearHistorySheet,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Palette.alert.withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.delete_sweep_rounded,
-                              color: Palette.alert,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    onPressed: _showClearHistorySheet,
+                    tooltip: 'Clear history',
+                    style: IconButton.styleFrom(
+                      backgroundColor: widget.isDarkMode
+                          ? const Color(0xFF3A1A18)
+                          : Palette.alertTint,
+                      minimumSize: const Size(48, 48),
+                    ),
+                    icon: Icon(
+                      Icons.delete_sweep_rounded,
+                      color: Palette.danger(widget.isDarkMode),
+                    ),
                   ),
                 ],
               ),
@@ -1101,57 +1073,10 @@ class _ViewRecentActivitiesState extends State<ViewRecentActivities>
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        vertical: spacingXLarge,
-        horizontal: spacingLarge,
-      ),
-      decoration: BoxDecoration(
-        color: widget.theme.cardColor,
-        borderRadius: BorderRadius.circular(radiusLarge),
-        boxShadow: widget.isDarkMode ? [] : softShadow,
-        border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.qr_code_scanner_rounded,
-            color: widget.theme.subtextColor.withOpacity(0.5),
-            size: 48,
-          ),
-          const SizedBox(height: spacingMedium),
-          Text(
-            'No detections yet',
-            style: bodyBold.copyWith(
-              fontSize: 16,
-              color: widget.theme.textColor,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: spacingSmall),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: spacingMedium),
-            child: Text(
-              'Start scanning to see your detection history',
-              style: caption.copyWith(
-                fontSize: 13,
-                color: widget.theme.subtextColor,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'No detections yet',
+      message: 'Start scanning to see your detection history',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
