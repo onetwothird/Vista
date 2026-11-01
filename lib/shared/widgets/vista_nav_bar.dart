@@ -11,7 +11,11 @@ class VistaNavItem {
 }
 
 /// Bottom navigation shared by every role: two tabs, the role's main action
-/// in the centre (in signal yellow), two tabs.
+/// in the centre, two tabs.
+///
+/// Every slot has the same shape (a pill holding the icon, a label below), so
+/// the bar reads as one row. The current tab's pill is a soft navy wash; the
+/// centre action's pill is solid navy, like the app's main buttons.
 class VistaNavBar extends StatelessWidget {
   final int selectedIndex;
   final bool isDarkMode;
@@ -46,17 +50,12 @@ class VistaNavBar extends StatelessWidget {
         child: SafeArea(
           top: false,
           child: SizedBox(
-            height: 72,
+            height: 76,
             child: Row(
               children: [
-                for (final item in leading) _tab(item, dark),
-                _ActionButton(
-                  item: action,
-                  hint: actionHint,
-                  selected: selectedIndex == action.index,
-                  onTap: () => _tap(action.index),
-                ),
-                for (final item in trailing) _tab(item, dark),
+                for (final item in leading) _slot(item, dark),
+                _slot(action, dark, isAction: true),
+                for (final item in trailing) _slot(item, dark),
               ],
             ),
           ),
@@ -70,40 +69,66 @@ class VistaNavBar extends StatelessWidget {
     onItemTapped(index);
   }
 
-  Widget _tab(VistaNavItem item, bool dark) {
+  Widget _slot(VistaNavItem item, bool dark, {bool isAction = false}) {
     final selected = selectedIndex == item.index;
-    final color = selected ? Palette.brand(dark) : Palette.muted(dark);
+    final Color pill;
+    final Color iconColor;
+    final Color labelColor;
+    if (isAction) {
+      // Same pairing as the main buttons: navy by day, honey by night.
+      pill = dark ? Palette.honey : Palette.violet;
+      iconColor = dark ? Palette.violetDeep : Colors.white;
+      labelColor = Palette.text(dark);
+    } else if (selected) {
+      pill = dark ? Palette.violetTintNight : Palette.violetTint;
+      iconColor = Palette.brand(dark);
+      labelColor = Palette.text(dark);
+    } else {
+      pill = Colors.transparent;
+      iconColor = Palette.muted(dark);
+      labelColor = Palette.muted(dark);
+    }
+
+    final String label;
+    if (isAction) {
+      label = item.label;
+    } else {
+      label = item.badge > 0
+          ? '${item.label} tab, ${item.badge} waiting'
+          : '${item.label} tab';
+    }
+
     return Expanded(
       child: Semantics(
         button: true,
         selected: selected,
-        label: item.badge > 0
-            ? '${item.label} tab, ${item.badge} waiting'
-            : '${item.label} tab',
+        label: label,
+        hint: isAction ? actionHint : null,
         excludeSemantics: true,
-        child: InkWell(
+        child: InkResponse(
           onTap: () => _tap(item.index),
+          radius: 36,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // A short bar marks the current tab so selection never relies
-              // on colour alone.
-              Container(
-                width: 28,
-                height: 3,
-                margin: const EdgeInsets.only(bottom: 8),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOutCubic,
+                width: isAction ? 60 : 56,
+                height: 34,
                 decoration: BoxDecoration(
-                  color: selected ? color : Colors.transparent,
-                  borderRadius: BorderRadius.circular(2),
+                  color: pill,
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                alignment: Alignment.center,
+                child: Badge(
+                  isLabelVisible: item.badge > 0,
+                  backgroundColor: Palette.alert,
+                  label: Text(item.badge > 9 ? '9+' : '${item.badge}'),
+                  child: Icon(item.icon, size: 24, color: iconColor),
                 ),
               ),
-              Badge(
-                isLabelVisible: item.badge > 0,
-                backgroundColor: Palette.alert,
-                label: Text(item.badge > 9 ? '9+' : '${item.badge}'),
-                child: Icon(item.icon, size: 26, color: color),
-              ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               Text(
                 item.label,
                 maxLines: 1,
@@ -111,8 +136,10 @@ class VistaNavBar extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.1,
-                  color: color,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                  color: labelColor,
+                  fontWeight: selected || isAction
+                      ? FontWeight.w700
+                      : FontWeight.w400,
                 ),
               ),
             ],
@@ -121,97 +148,4 @@ class VistaNavBar extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ActionButton extends StatelessWidget {
-  final VistaNavItem item;
-  final String hint;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _ActionButton({
-    required this.item,
-    required this.hint,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Center(
-        child: Semantics(
-          button: true,
-          selected: selected,
-          label: item.label,
-          hint: hint,
-          excludeSemantics: true,
-          child: Material(
-            color: Palette.signal,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-              side: const BorderSide(color: Palette.signalDeep, width: 1.5),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: onTap,
-              child: SizedBox(
-                width: 64,
-                height: 56,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const Positioned.fill(child: TactileDots()),
-                    Icon(item.icon, size: 30, color: Palette.onSignal),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The raised-dome grid of tactile warning paving, used as texture on the
-/// app's primary action. Painted once and cached.
-class TactileDots extends StatelessWidget {
-  final Color color;
-  final double spacing;
-  const TactileDots({
-    super.key,
-    this.color = const Color(0x2E1B1530),
-    this.spacing = 9,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: CustomPaint(painter: _DotsPainter(color, spacing)),
-    );
-  }
-}
-
-class _DotsPainter extends CustomPainter {
-  final Color color;
-  final double spacing;
-  _DotsPainter(this.color, this.spacing);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
-    final r = spacing * 0.17;
-    var row = 0;
-    for (var y = spacing / 2; y < size.height; y += spacing, row++) {
-      final offset = row.isOdd ? spacing / 2 : 0.0;
-      for (var x = spacing / 2 + offset; x < size.width; x += spacing) {
-        canvas.drawCircle(Offset(x, y), r, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DotsPainter old) =>
-      old.color != color || old.spacing != spacing;
 }
