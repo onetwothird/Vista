@@ -11,6 +11,7 @@ import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:seelai_app/storage/cloudinary_service.dart';
 
 import 'package:seelai_app/themes/palette.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class FaceDetectionController {
   final CameraService cameraService;
@@ -141,7 +142,7 @@ class FaceDetectionController {
   Future<void> _initializeTts() async {
     try {
       await _flutterTts.setLanguage("fil-PH");
-      await _flutterTts.setSpeechRate(0.5);
+      await _flutterTts.setSpeechRate(a11y.speechRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
 
