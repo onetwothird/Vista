@@ -453,10 +453,10 @@ class _PartiallySightedSignupScreenState
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _handleSignup,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Palette.honey,
-                                foregroundColor: Palette.violetDeep,
                                 elevation: 0,
-                                shape: const StadiumBorder(),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
                               child: Text(
                                 isGoogle
