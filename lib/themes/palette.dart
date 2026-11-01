@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 /// harness and teal goggle lenses. Gold on navy is the signature pairing:
 /// it is the strongest, calmest contrast for low-vision readers.
 ///
+/// Navy carries text and primary actions. Honey is the single accent
+/// (the Scan button, the active page, a selected choice), never a large fill.
+/// Teal marks anything live: location, calls, connection.
+///
 /// Tuned for partially sighted readers: text colours clear WCAG AAA (7:1) on
 /// their surfaces, and pages are a soft warm white instead of pure white to
 /// cut glare. Honey is for warm, low-strength backgrounds and highlights;
@@ -15,28 +19,33 @@ abstract final class Palette {
   // Brand (from the pup)
   static const violet = Color(0xFF1B3157); // harness navy, 9:1 on white
   static const violetDeep = Color(0xFF13223A);
-  static const lilac = Color(0xFFFFB938); // honey, brand on dark surfaces
-  static const violetTint = Color(0xFFFFF1CF); // honey wash
-  static const violetTintNight = Color(0xFF3A2F17);
+  static const lilac = Color(0xFFF2B13F); // honey, brand on dark surfaces
+  static const violetTint = Color(0xFFE6ECF4); // navy wash
+  static const violetTintNight = Color(0xFF243552);
 
-  static const honey = Color(0xFFFFB938); // fur
-  static const honeyDeep = Color(0xFFE89A12); // fur shadow
-  static const honeyTint = Color(0xFFFFF6E0); // page wash behind the pup
+  static const honey = Color(0xFFF2B13F); // fur
+  static const honeyDeep = Color(0xFFD9951F); // fur shadow
+  static const honeyTint = Color(0xFFFBF1DC); // small honey highlights only
   static const teal = Color(0xFF0F7F78); // goggles, 4.9:1 on white
   static const tealBright = Color(0xFF2EC4B6);
   static const tealTint = Color(0xFFDDF6F3);
   static const tongue = Color(0xFFE8606B);
 
-  static const signal = Color(0xFFFFB938); // tactile-paving yellow
-  static const signalDeep = Color(0xFFE89A12);
+  // Hero backdrop behind the pup: a pale wash of the harness navy, so the
+  // illustrations' dark outlines and labels read without a card behind them.
+  static const mist = Color(0xFFE8EEF5);
+  static const mistDeep = Color(0xFFD9E2EE);
+
+  static const signal = Color(0xFFF2B13F); // tactile-paving yellow
+  static const signalDeep = Color(0xFFD9951F);
   static const onSignal = Color(0xFF13223A);
 
   // Day surfaces and ink
-  static const paper = Color(0xFFF7F6F3);
-  static const paperSunk = Color(0xFFEEECE7);
+  static const paper = Color(0xFFF5F7FA);
+  static const paperSunk = Color(0xFFEBEFF4);
   static const surface = Color(0xFFFFFFFF);
-  static const line = Color(0xFFE3E0D8);
-  static const lineStrong = Color(0xFFC9C4B8);
+  static const line = Color(0xFFDFE5EC);
+  static const lineStrong = Color(0xFFC3CCD7);
   static const ink = Color(0xFF13223A); // 15:1
   static const inkSoft = Color(0xFF2B3A52); // 10.5:1
   static const inkMuted = Color(0xFF4E5B6E); // 6.5:1
@@ -63,13 +72,22 @@ abstract final class Palette {
   static const infoNight = Color(0xFF8FB0EA);
   static const infoTint = Color(0xFFE5EDF8);
 
+  /// Set from accessibility settings: secondary text and outlines get
+  /// darker (or lighter at night) so everything reads clearly.
+  static bool highContrast = false;
+
   // Resolvers for widgets that still take an `isDarkMode` flag.
   static Color page(bool dark) => dark ? nightPage : paper;
   static Color card(bool dark) => dark ? nightSurface : surface;
   static Color raised(bool dark) => dark ? nightRaised : paperSunk;
-  static Color border(bool dark) => dark ? nightLine : line;
-  static Color text(bool dark) => dark ? nightText : ink;
-  static Color muted(bool dark) => dark ? nightMuted : inkMuted;
+  static Color border(bool dark) =>
+      highContrast ? (dark ? nightMuted : inkMuted) : (dark ? nightLine : line);
+  static Color text(bool dark) => highContrast
+      ? (dark ? Colors.white : Colors.black)
+      : (dark ? nightText : ink);
+  static Color muted(bool dark) => highContrast
+      ? (dark ? nightText : inkSoft)
+      : (dark ? nightMuted : inkMuted);
   static Color brand(bool dark) => dark ? lilac : violet;
   static Color danger(bool dark) => dark ? alertNight : alert;
 }
