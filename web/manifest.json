@@ -3,7 +3,7 @@
     "short_name": "seelai_app",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#FDEEA4",
+    "background_color": "#1B3157",
     "theme_color": "#13223A",
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",
