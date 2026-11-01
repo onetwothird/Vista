@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:seelai_app/roles/partially_sighted/home/sections/home_screen/communication/screens/video_call_screen.dart';
 import 'package:seelai_app/roles/partially_sighted/home/sections/home_screen/communication/screens/voice_call_screen.dart';
+import 'package:seelai_app/shared/widgets/vista_header.dart';
 import 'package:seelai_app/themes/constants.dart';
 
+/// One card for reaching your caretaker: who you will reach, then two big
+/// side-by-side call buttons. Teal marks anything that connects you to
+/// someone.
 class QuickContactSection extends StatelessWidget {
   final bool isDarkMode;
   final dynamic theme;
@@ -17,33 +21,48 @@ class QuickContactSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    final dark = isDarkMode;
+    final teal = dark ? Palette.tealBright : Palette.teal;
+    final tealWash = dark ? const Color(0xFF173B3A) : Palette.tealTint;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: _ContactAction(
-            title: 'Voice Call',
-            subtitle: 'Tap to start',
-            icon: Icons.call_rounded,
-            primaryColor: const Color.fromARGB(255, 124, 58, 237),
-            isDarkMode: isDarkMode,
-            theme: theme,
-            onTap: () {
-              VoiceCallScreen.startCall(context, userData);
-            },
-          ),
+        VistaSectionTitle(
+          title: 'Call your caretaker',
+          subtitle: 'They pick up on their phone',
+          isDarkMode: dark,
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _ContactAction(
-            title: 'Video Call',
-            subtitle: 'Tap to start',
-            icon: Icons.videocam_rounded,
-            primaryColor: const Color.fromARGB(255, 124, 58, 237),
-            isDarkMode: isDarkMode,
-            theme: theme,
-            onTap: () {
-              VideoCallScreen.startCall(context, userData);
-            },
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Palette.card(dark),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: Palette.border(dark)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _CallButton(
+                  label: 'Voice call',
+                  icon: Icons.call_rounded,
+                  background: dark ? Palette.lilac : Palette.violet,
+                  foreground: dark ? Palette.violetDeep : Colors.white,
+                  onTap: () => VoiceCallScreen.startCall(context, userData),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _CallButton(
+                  label: 'Video call',
+                  icon: Icons.videocam_rounded,
+                  background: tealWash,
+                  foreground: teal,
+                  onTap: () => VideoCallScreen.startCall(context, userData),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -51,122 +70,52 @@ class QuickContactSection extends StatelessWidget {
   }
 }
 
-class _ContactAction extends StatefulWidget {
-  final String title;
-  final String subtitle;
+/// A tall call button: icon on top, label below, easy to hit.
+class _CallButton extends StatelessWidget {
+  final String label;
   final IconData icon;
-  final Color primaryColor;
-  final bool isDarkMode;
-  final dynamic theme;
+  final Color background;
+  final Color foreground;
   final VoidCallback onTap;
 
-  const _ContactAction({
-    required this.title,
-    required this.subtitle,
+  const _CallButton({
+    required this.label,
     required this.icon,
-    required this.primaryColor,
-    required this.isDarkMode,
-    required this.theme,
+    required this.background,
+    required this.foreground,
     required this.onTap,
   });
 
   @override
-  State<_ContactAction> createState() => _ContactActionState();
-}
-
-class _ContactActionState extends State<_ContactAction>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '${widget.title} button',
       button: true,
-      hint: 'Double tap to start a ${widget.title.toLowerCase()}',
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              _animationController.forward().then((_) {
-                _animationController.reverse();
-              });
-              widget.onTap();
-            },
-            borderRadius: BorderRadius.circular(20),
-            splashColor: widget.primaryColor.withValues(alpha: 0.1),
-            highlightColor: Colors.transparent,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                // Clean white background for light mode, standard card color for dark mode
-                color: widget.isDarkMode ? Palette.nightSurface : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                // Subtle border to define the shape just like the reference image
-                border: Border.all(
-                  color: widget.isDarkMode
-                      ? Colors.white12
-                      : Colors.black.withValues(alpha: 0.05),
-                  width: 1.5,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(widget.icon, size: 24, color: widget.primaryColor),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          widget.title,
-                          style: bodyBold.copyWith(
-                            fontSize: 15,
-                            color: widget.theme.textColor,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          widget.subtitle,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: widget.theme.textColor.withValues(
-                              alpha: 0.5,
-                            ),
-                            fontWeight: FontWeight.w500,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
+      label: '$label your caretaker',
+      excludeSemantics: true,
+      child: Material(
+        color: background,
+        borderRadius: BorderRadius.circular(16),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 30, color: foreground),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: foreground,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
