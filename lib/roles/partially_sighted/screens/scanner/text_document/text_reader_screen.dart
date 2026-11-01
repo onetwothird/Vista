@@ -11,6 +11,7 @@ import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:seelai_app/storage/cloudinary_service.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class TextReaderScreen extends StatefulWidget {
   final CameraService cameraService;
@@ -68,7 +69,7 @@ class _TextReaderScreenState extends State<TextReaderScreen> {
 
   Future<void> _initializeTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.4);
+    await _flutterTts.setSpeechRate(a11y.speechRate * 0.85);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
 
