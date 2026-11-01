@@ -250,13 +250,21 @@ class _VisuallyImpairedHomeScreenState
           floatingActionButton: _selectedIndex == 0
               ? ValueListenableBuilder<bool>(
                   valueListenable: _navVisible,
-                  builder: (context, visible, child) => AnimatedSlide(
-                    duration: const Duration(milliseconds: 200),
-                    offset: visible ? Offset.zero : const Offset(0, 2),
-                    child: child,
-                  ),
+                  // When the menu hides, drop the button into the space it left
+                  // (the menu is 76 high above the system inset).
+                  builder: (context, visible, child) =>
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(end: visible ? 0 : 76),
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        builder: (context, dy, child) => Transform.translate(
+                          offset: Offset(0, dy),
+                          child: child,
+                        ),
+                        child: child,
+                      ),
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 84),
+                    padding: const EdgeInsets.only(bottom: 4),
                     child: FloatingActionButton.extended(
                       backgroundColor: Palette.brand(dark),
                       foregroundColor: dark ? Palette.ink : Colors.white,
@@ -268,6 +276,7 @@ class _VisuallyImpairedHomeScreenState
                 )
               : null,
           body: SafeArea(
+            top: false,
             bottom: false,
             child: NotificationListener<UserScrollNotification>(
               onNotification: (n) {
@@ -281,7 +290,13 @@ class _VisuallyImpairedHomeScreenState
               child: Stack(
                 children: [
                   _buildTabs(theme, dark),
-                  MissedCallAlertSection(isDarkMode: dark, theme: theme),
+                  SafeArea(
+                    bottom: false,
+                    child: MissedCallAlertSection(
+                      isDarkMode: dark,
+                      theme: theme,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -309,8 +324,12 @@ class _VisuallyImpairedHomeScreenState
 
   Widget _buildTabs(_AppTheme theme, bool dark) {
     final userId = widget.userData['uid'] as String? ?? '';
-    Widget lazy(int index, Widget Function() build) =>
-        _visitedTabs.contains(index) ? build() : const SizedBox.shrink();
+    Widget lazy(int index, Widget Function() build) {
+      if (!_visitedTabs.contains(index)) return const SizedBox.shrink();
+      // The home tab's header runs up behind the status bar; the rest
+      // keep a normal top inset.
+      return index == 0 ? build() : SafeArea(bottom: false, child: build());
+    }
 
     return IndexedStack(
       index: _selectedIndex,
@@ -326,6 +345,7 @@ class _VisuallyImpairedHomeScreenState
                   userName: widget.userData['name'] ?? '',
                   profileImageUrl:
                       widget.userData['profileImageUrl'] as String?,
+                  userData: widget.userData,
                   isDarkMode: dark,
                   onToggleDarkMode: _toggleDarkMode,
                   onNotificationTap: _openNotifications,
@@ -513,21 +533,23 @@ class _AppTheme {
     required this.cardColor,
   });
 
-  static const light = _AppTheme(
-    backgroundGradient: LinearGradient(colors: [Palette.paper, Palette.paper]),
+  static _AppTheme get light => _AppTheme(
+    backgroundGradient: const LinearGradient(
+      colors: [Palette.paper, Palette.paper],
+    ),
     backgroundColor: Palette.paper,
-    textColor: Palette.ink,
-    subtextColor: Palette.inkMuted,
+    textColor: Palette.text(false),
+    subtextColor: Palette.muted(false),
     cardColor: Palette.surface,
   );
 
-  static const dark = _AppTheme(
-    backgroundGradient: LinearGradient(
+  static _AppTheme get dark => _AppTheme(
+    backgroundGradient: const LinearGradient(
       colors: [Palette.nightPage, Palette.nightPage],
     ),
     backgroundColor: Palette.nightPage,
-    textColor: Palette.nightText,
-    subtextColor: Palette.nightMuted,
+    textColor: Palette.text(true),
+    subtextColor: Palette.muted(true),
     cardColor: Palette.nightSurface,
   );
 }
