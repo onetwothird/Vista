@@ -16,6 +16,7 @@ import 'package:seelai_app/roles/partially_sighted/home/sections/home_screen/wid
 import 'package:seelai_app/roles/caretaker/home/sections/patient_location/select_patient.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; // <-- Add this import
+import 'package:seelai_app/shared/accessibility.dart';
 
 class RealtimeTrackingScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -82,7 +83,7 @@ class _RealtimeTrackingScreenState extends State<RealtimeTrackingScreen>
 
   Future<void> _initTTS() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
   }
 
   Future<void> _speak(String text) async => await _flutterTts.speak(text);
