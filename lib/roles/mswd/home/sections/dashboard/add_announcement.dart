@@ -8,6 +8,7 @@ import 'package:seelai_app/firebase/mswd/announcement_service.dart';
 import 'package:seelai_app/roles/mswd/home/model/announcement_model.dart';
 import 'package:seelai_app/roles/mswd/home/model/announcement_icons.dart';
 import 'package:seelai_app/firebase/mswd/user_fetch_service.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class AddAnnouncementPage extends StatefulWidget {
   final bool isDarkMode;
@@ -55,7 +56,7 @@ class _AddAnnouncementPageState extends State<AddAnnouncementPage> {
 
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
     // Added this line to force the app to wait until the TTS finishes
