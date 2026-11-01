@@ -6,6 +6,8 @@ import 'package:seelai_app/roles/caretaker/home/sections/requests_screen/request
 import 'package:seelai_app/firebase/firebase_services.dart';
 // USING THE MSWD DETAILS SCREEN INSTEAD OF CARETAKER
 import 'package:seelai_app/roles/mswd/home/sections/requests/requests_details.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class MSWDNotificationsBottomSheet extends StatefulWidget {
   final String adminId;
@@ -100,7 +102,7 @@ class _MSWDNotificationsBottomSheetState
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting &&
                     !snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: VistaLoader(size: 88));
                 }
 
                 if (snapshot.hasError) {
@@ -114,22 +116,11 @@ class _MSWDNotificationsBottomSheetState
 
                 final requests = snapshot.data ?? [];
                 if (requests.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.notifications_off_outlined,
-                          size: 60,
-                          color: subTextColor.withValues(alpha: 0.5),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "No system notifications yet",
-                          style: TextStyle(color: subTextColor, fontSize: 16),
-                        ),
-                      ],
-                    ),
+                  return VistaEmptyState(
+                    title: 'No notifications yet',
+                    message: 'Requests and alerts that need you show up here.',
+                    isDarkMode: widget.isDarkMode,
+                    mascotSize: 130,
                   );
                 }
 
