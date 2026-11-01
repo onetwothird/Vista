@@ -28,7 +28,7 @@ class CustomBottomNavigation extends StatelessWidget {
       isDarkMode: isDarkMode,
       onItemTapped: onItemTapped,
       leading: const [
-        VistaNavItem(0, Icons.home_outlined, 'Home'),
+        VistaNavItem(0, Icons.home_rounded, 'Home'),
         VistaNavItem(1, Icons.people_outline_rounded, 'Patients'),
       ],
       action: const VistaNavItem(4, Icons.my_location_rounded, 'Track'),
