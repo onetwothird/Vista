@@ -5,6 +5,8 @@ import 'all_detections_screen.dart';
 import 'detection_detail_screen.dart';
 import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class RecentActivitiesContent extends StatefulWidget {
   final bool isDarkMode;
@@ -302,7 +304,7 @@ class _RecentActivitiesContentState extends State<RecentActivitiesContent> {
         key: const ValueKey('loader'),
         child: Padding(
           padding: EdgeInsets.all(spacingLarge),
-          child: CircularProgressIndicator(color: primary),
+          child: VistaLoader(size: 88),
         ),
       );
     }
@@ -686,58 +688,10 @@ class _RecentActivitiesContentState extends State<RecentActivitiesContent> {
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      key: const ValueKey('empty'),
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: spacingXLarge,
-        horizontal: spacingLarge,
-      ),
-      decoration: BoxDecoration(
-        color: widget.theme.cardColor,
-        borderRadius: BorderRadius.circular(radiusLarge),
-        boxShadow: widget.isDarkMode ? [] : softShadow,
-        border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.qr_code_scanner_rounded,
-            color: widget.theme.subtextColor.withOpacity(0.5),
-            size: 48,
-          ),
-          SizedBox(height: spacingMedium),
-          Text(
-            'No detections yet',
-            style: bodyBold.copyWith(
-              fontSize: 16,
-              color: widget.theme.textColor,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: spacingSmall),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: spacingMedium),
-            child: Text(
-              'Start scanning to see your detection history',
-              style: caption.copyWith(
-                fontSize: 13,
-                color: widget.theme.subtextColor,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'No detections yet',
+      message: 'Start scanning to see your detection history',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
