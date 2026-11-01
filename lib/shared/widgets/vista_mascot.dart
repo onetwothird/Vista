@@ -31,6 +31,8 @@ class VistaMascot extends StatefulWidget {
     this.bubbleColor = Palette.violet,
     this.bubbleTextColor = Colors.white,
     this.semanticLabel = 'Vista the pup. Tap to say hi.',
+    this.greeting,
+    this.bubbleShift = 0,
   });
 
   final String pose;
@@ -41,6 +43,13 @@ class VistaMascot extends StatefulWidget {
   final Color bubbleColor;
   final Color bubbleTextColor;
   final String semanticLabel;
+
+  /// Said once, a moment after the pup appears.
+  final String? greeting;
+
+  /// Moves the speech bubble sideways (negative is left), for a pup that
+  /// sits near the edge of the screen.
+  final double bubbleShift;
 
   @override
   State<VistaMascot> createState() => VistaMascotState();
@@ -85,7 +94,16 @@ class VistaMascotState extends State<VistaMascot>
       if (!_idle.isAnimating) _idle.repeat();
       if (_enter.value == 0 && !_enter.isAnimating) _enter.forward();
     }
+    final greeting = widget.greeting;
+    if (greeting != null && !_greeted) {
+      _greeted = true;
+      Future.delayed(const Duration(milliseconds: 700), () {
+        if (mounted) hop(greeting);
+      });
+    }
   }
+
+  bool _greeted = false;
 
   @override
   void dispose() {
@@ -215,8 +233,8 @@ class VistaMascotState extends State<VistaMascot>
               ),
               Positioned(
                 top: -size * 0.16,
-                left: -40,
-                right: -40,
+                left: -40 + widget.bubbleShift,
+                right: -40 - widget.bubbleShift,
                 child: IgnorePointer(
                   child: Semantics(
                     liveRegion: true,
