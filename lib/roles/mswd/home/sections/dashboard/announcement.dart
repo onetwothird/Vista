@@ -7,6 +7,9 @@ import 'package:seelai_app/firebase/mswd/announcement_service.dart';
 import 'package:seelai_app/roles/mswd/home/model/announcement_model.dart';
 import 'package:seelai_app/roles/mswd/home/sections/dashboard/add_announcement.dart';
 import 'package:seelai_app/roles/mswd/home/sections/dashboard/all_announcements.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class AnnouncementSection extends StatefulWidget {
   final bool isDarkMode;
@@ -38,7 +41,7 @@ class _AnnouncementSectionState extends State<AnnouncementSection> {
   // Added TTS initialization method
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
@@ -141,7 +144,7 @@ class _AnnouncementSectionState extends State<AnnouncementSection> {
               return Center(
                 child: Padding(
                   padding: EdgeInsets.all(spacingLarge),
-                  child: CircularProgressIndicator(color: primary),
+                  child: VistaLoader(size: 72),
                 ),
               );
             }
@@ -170,24 +173,11 @@ class _AnnouncementSectionState extends State<AnnouncementSection> {
             final allAnnouncements = snapshot.data ?? [];
 
             if (allAnnouncements.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.all(spacingLarge),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.campaign_rounded,
-                        size: 48,
-                        color: widget.theme.subtextColor.withOpacity(0.3),
-                      ),
-                      SizedBox(height: spacingSmall),
-                      Text(
-                        'No announcements yet',
-                        style: body.copyWith(color: widget.theme.subtextColor),
-                      ),
-                    ],
-                  ),
-                ),
+              return VistaEmptyState(
+                title: 'No announcements yet',
+                message: 'Post one to reach every user.',
+                isDarkMode: widget.isDarkMode,
+                mascotSize: 110,
               );
             }
 
@@ -302,7 +292,9 @@ class _AnnouncementSectionState extends State<AnnouncementSection> {
   }) {
     String timeAgo = _getTimeAgo(announcement.timestamp);
     IconData icon = _getSafeIcon(announcement.iconCodePoint);
-    Color color = Color(announcement.colorValue);
+    // One brand colour for every announcement, whatever was picked when
+    // it was posted, so the feed stays calm and readable.
+    final Color color = Palette.brand(widget.isDarkMode);
 
     return Container(
       padding: EdgeInsets.all(spacingMedium),
