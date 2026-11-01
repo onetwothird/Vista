@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:seelai_app/screens/role_selection_screen.dart';
-import 'package:seelai_app/shared/widgets/auth_mascot_header.dart';
 import 'package:seelai_app/shared/widgets/vista_mascot.dart';
 import 'package:seelai_app/shared/widgets/vista_sky.dart';
 import 'package:seelai_app/themes/palette.dart';
@@ -18,7 +16,8 @@ class _Slide {
     this.scene = false,
   });
 
-  /// True for full illustrations (pup plus props) that sit on a light card.
+  /// True for wide illustrations (pup plus props); they take the full width
+  /// and get no disc behind them.
   final bool scene;
   final String pose;
   final String title;
@@ -33,8 +32,7 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen>
-    with SingleTickerProviderStateMixin {
+class _OnboardingScreenState extends State<OnboardingScreen> {
   static const _slides = [
     _Slide(
       pose: MascotPose.welcome,
@@ -70,11 +68,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     ),
   ];
 
+  static const _topBarHeight = 56.0;
+
   final _pageController = PageController();
-  late final AnimationController _float = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 9000),
-  )..repeat();
   int _page = 0;
   Timer? _timer;
 
@@ -92,13 +88,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     for (final s in _slides) {
       precacheImage(AssetImage(s.pose), context);
     }
-    if (MediaQuery.of(context).disableAnimations) _float.stop();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    _float.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -117,7 +111,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   void _go(int page) => _pageController.animateToPage(
     page,
-    duration: const Duration(milliseconds: 450),
+    duration: const Duration(milliseconds: 420),
     curve: Curves.easeOutCubic,
   );
 
@@ -142,37 +136,17 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: Palette.violetDeep,
+        backgroundColor: Palette.mist,
         body: LayoutBuilder(
           builder: (context, box) {
-            // The white sheet stays put; slides swipe across it.
-            final sheetTop = box.maxHeight * 0.58;
+            final safeTop = MediaQuery.paddingOf(context).top;
+            // The sheet stays put; slides swipe across it.
+            final sheetTop = box.maxHeight * 0.6;
+            final heroHeight = sheetTop - safeTop - _topBarHeight;
             return Stack(
               children: [
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: sheetTop + 40,
-                  child: RepaintBoundary(
-                    child: AnimatedBuilder(
-                      animation: Listenable.merge([_float, _pageController]),
-                      builder: (context, _) => CustomPaint(
-                        painter: VistaSkyPainter(
-                          t: _float.value,
-                          page:
-                              _pageController.hasClients &&
-                                  _pageController.position.haveDimensions
-                              ? _pageController.page ?? 0
-                              : _page.toDouble(),
-                          horizon: sheetTop,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                 Positioned(
                   top: sheetTop,
                   left: 0,
@@ -180,9 +154,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   bottom: 0,
                   child: const DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Palette.paper,
+                      color: Palette.surface,
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(32),
+                        top: Radius.circular(28),
                       ),
                     ),
                   ),
@@ -192,30 +166,19 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     children: [
                       _buildTopBar(),
                       Expanded(
-                        child: Builder(
-                          builder: (context) {
-                            // Hero fills the navy area down to the sheet.
-                            final visualH =
-                                sheetTop -
-                                MediaQuery.paddingOf(context).top -
-                                60 -
-                                8;
-                            return PageView.builder(
-                              controller: _pageController,
-                              itemCount: _slides.length,
-                              onPageChanged: (i) {
-                                setState(() => _page = i);
-                                _startTimer();
-                              },
-                              itemBuilder: (context, i) => _SlideView(
-                                slide: _slides[i],
-                                controller: _pageController,
-                                float: _float,
-                                index: i,
-                                visualHeight: visualH,
-                              ),
-                            );
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: _slides.length,
+                          onPageChanged: (i) {
+                            setState(() => _page = i);
+                            _startTimer();
                           },
+                          itemBuilder: (context, i) => _SlideView(
+                            slide: _slides[i],
+                            controller: _pageController,
+                            index: i,
+                            heroHeight: heroHeight,
+                          ),
                         ),
                       ),
                       _buildBottomBar(),
@@ -232,17 +195,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   Widget _buildTopBar() {
     return SizedBox(
-      height: 60,
+      height: _topBarHeight,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.only(left: 28, right: 12),
         child: Row(
           children: [
-            const SizedBox(width: 12),
             const Text(
               'Vista',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
+                color: Palette.ink,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.2,
               ),
@@ -254,7 +216,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               child: TextButton(
                 onPressed: _isLast ? null : _finish,
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
+                  foregroundColor: Palette.inkSoft,
                   minimumSize: const Size(64, 48),
                 ),
                 child: const Text(
@@ -271,7 +233,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   Widget _buildBottomBar() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+      padding: const EdgeInsets.fromLTRB(28, 8, 24, 20),
       child: Row(
         children: [
           Semantics(
@@ -287,12 +249,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOutCubic,
-                    margin: const EdgeInsets.only(right: 6),
-                    height: 10,
-                    width: active ? 32 : 10,
+                    margin: const EdgeInsets.only(right: 8),
+                    height: 8,
+                    width: active ? 28 : 8,
                     decoration: BoxDecoration(
                       color: active ? Palette.honeyDeep : Palette.lineStrong,
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 );
@@ -301,29 +263,24 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           ),
           const Spacer(),
           SizedBox(
-            height: 60,
+            height: 56,
             child: ElevatedButton(
               onPressed: _next,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Palette.honey,
-                foregroundColor: Palette.violetDeep,
+                backgroundColor: Palette.violet,
+                foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(horizontal: 32),
-                shape: const StadiumBorder(),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _isLast ? 'Get started' : 'Next',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.pets_rounded, size: 20),
-                ],
+              child: Text(
+                _isLast ? 'Get started' : 'Next',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -337,31 +294,29 @@ class _SlideView extends StatelessWidget {
   const _SlideView({
     required this.slide,
     required this.controller,
-    required this.float,
     required this.index,
-    required this.visualHeight,
+    required this.heroHeight,
   });
 
   final _Slide slide;
   final PageController controller;
-  final Animation<double> float;
   final int index;
-  final double visualHeight;
+  final double heroHeight;
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.sizeOf(context).width;
     final scene = slide.scene;
-    final mascotSize = scene
-        ? math.min(visualHeight * 0.8, width * 0.78)
-        : math.min(visualHeight * 0.86, width * 0.7);
-    final lens = mascotSize * (scene ? 1.16 : 1.18);
+    // Scenes are wide and carry their own props; a lone pup sits on a disc.
+    final artSize = scene
+        ? (heroHeight * 0.96).clamp(0.0, width)
+        : (heroHeight * 0.9).clamp(0.0, width * 0.86);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: visualHeight,
+          height: heroHeight,
           width: double.infinity,
           child: AnimatedBuilder(
             animation: controller,
@@ -370,9 +325,9 @@ class _SlideView extends StatelessWidget {
               if (controller.hasClients && controller.position.haveDimensions) {
                 offset = (controller.page ?? 0) - index;
               }
-              // Parallax: the hero drifts slower than the page.
+              // Parallax: the art drifts slower than the page.
               return Transform.translate(
-                offset: Offset(offset * -80, 0),
+                offset: Offset(offset * -60, 0),
                 child: Opacity(
                   opacity: (1 - offset.abs() * 1.2).clamp(0.0, 1.0),
                   child: child,
@@ -380,52 +335,28 @@ class _SlideView extends StatelessWidget {
               );
             },
             child: Stack(
-              alignment: Alignment.center,
+              alignment: Alignment.bottomCenter,
               clipBehavior: Clip.none,
               children: [
-                IgnorePointer(
-                  child: SizedBox(
-                    width: lens,
-                    height: lens,
-                    child: AnimatedBuilder(
-                      animation: float,
-                      builder: (context, _) =>
-                          CustomPaint(painter: LensPainter(float.value)),
-                    ),
+                if (!scene)
+                  Positioned(
+                    bottom: 8 + artSize * 0.07,
+                    child: VistaLens(size: artSize * 0.84),
                   ),
-                ),
-                // Scene illustrations have dark labels, so they sit on a
-                // soft light window inside the lens.
-                if (scene)
-                  Container(
-                    width: mascotSize * 1.04,
-                    height: mascotSize * 1.04,
-                    decoration: BoxDecoration(
-                      color: Palette.honeyTint,
-                      borderRadius: BorderRadius.circular(44),
-                      border: Border.all(color: Palette.honey, width: 4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Palette.tealBright.withValues(alpha: 0.35),
-                          blurRadius: 40,
-                        ),
-                      ],
-                    ),
+                Positioned(
+                  bottom: 8,
+                  child: VistaMascot(
+                    pose: slide.pose,
+                    size: artSize,
+                    lines: slide.lines,
                   ),
-                VistaMascot(
-                  pose: slide.pose,
-                  size: mascotSize,
-                  lines: slide.lines,
-                  bubbleColor: Palette.honey,
-                  bubbleTextColor: Palette.violetDeep,
                 ),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 32),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
+          padding: const EdgeInsets.fromLTRB(28, 28, 28, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -435,14 +366,14 @@ class _SlideView extends StatelessWidget {
                   slide.title,
                   style: const TextStyle(
                     color: Palette.ink,
-                    fontSize: 34,
-                    height: 1.1,
+                    fontSize: 32,
+                    height: 1.15,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
+                    letterSpacing: -0.4,
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Text(
                 slide.body,
                 style: const TextStyle(
