@@ -13,6 +13,8 @@ import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_callkit_incoming/entities/entities.dart';
 
 import 'package:seelai_app/shared/widgets/vista_header.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class RequestsContent extends StatefulWidget {
   final bool isDarkMode;
@@ -125,7 +127,7 @@ class _RequestsContentState extends State<RequestsContent>
   Future<void> _initializeTts() async {
     try {
       await _flutterTts.setLanguage("en-US");
-      await _flutterTts.setSpeechRate(0.5);
+      await _flutterTts.setSpeechRate(a11y.speechRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
     } catch (e) {
@@ -1375,76 +1377,40 @@ class _RequestsContentState extends State<RequestsContent>
   }
 
   Widget _buildEmptyState() {
-    IconData icon;
     String title;
     String sub;
 
     switch (_tabController.index) {
       case 0:
-        icon = Icons.inbox_rounded;
         title = "All Caught Up!";
         sub = "No pending requests at the moment.";
         break;
       case 1:
-        icon = Icons.assignment_turned_in_rounded;
         title = "No Active Tasks";
         sub = "Accept a request to see it here.";
         break;
       case 2:
-        icon = Icons.history_edu_rounded;
         title = "No History";
         sub = "Completed requests will appear here.";
         break;
       case 3:
-        icon = Icons.delete_outline_rounded;
         title = "Trash is Empty";
         sub = "Deleted requests will appear here.";
         break;
       default:
-        icon = Icons.inbox;
         title = "No Data";
         sub = "";
     }
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: widget.isDarkMode
-                  ? Colors.white10
-                  : Colors.black.withValues(alpha: 0.03),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              size: 48,
-              color: widget.theme.subtextColor.withOpacity(0.5),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-              color: widget.theme.textColor,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            sub,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: widget.theme.subtextColor,
-            ),
-          ),
-        ],
-      ),
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
+      children: [
+        VistaEmptyState(
+          title: title,
+          message: sub.isEmpty ? null : sub,
+          isDarkMode: widget.isDarkMode,
+        ),
+      ],
     );
   }
 
