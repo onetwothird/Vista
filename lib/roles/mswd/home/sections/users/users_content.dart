@@ -9,6 +9,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'user_profile_screen.dart';
 
 import 'package:seelai_app/shared/widgets/vista_header.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class UsersContent extends StatefulWidget {
   final bool isDarkMode;
@@ -567,13 +568,12 @@ class _UsersContentState extends State<UsersContent>
     final filteredUsers = _getFilteredUsers(_partiallySightedUsers);
 
     if (filteredUsers.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: Text(
-            'No partially sighted users found',
-            style: body.copyWith(color: widget.theme.subtextColor),
-          ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: VistaEmptyState(
+          title: 'No users found',
+          message: 'Partially sighted users appear here once they sign up.',
+          isDarkMode: widget.isDarkMode,
         ),
       );
     }
@@ -603,13 +603,12 @@ class _UsersContentState extends State<UsersContent>
     final filteredCaretakers = _getFilteredUsers(_caretakersUsers);
 
     if (filteredCaretakers.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: Text(
-            'No approved caretakers found',
-            style: body.copyWith(color: widget.theme.subtextColor),
-          ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: VistaEmptyState(
+          title: 'No caretakers yet',
+          message: 'Approved caretakers appear here.',
+          isDarkMode: widget.isDarkMode,
         ),
       );
     }
@@ -639,21 +638,12 @@ class _UsersContentState extends State<UsersContent>
     final filteredPending = _getFilteredUsers(_pendingCaretakers);
 
     if (filteredPending.isEmpty) {
-      return Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            Icon(
-              Icons.check_circle_outline_rounded,
-              size: 48,
-              color: widget.theme.subtextColor.withOpacity(0.5),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'No pending requests',
-              style: body.copyWith(color: widget.theme.subtextColor),
-            ),
-          ],
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: VistaEmptyState(
+          title: 'No pending requests',
+          message: 'New caretaker sign-ups waiting for approval show up here.',
+          isDarkMode: widget.isDarkMode,
         ),
       );
     }
