@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/roles/caretaker/home/sections/requests_screen/request_model.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class ViNotificationsBottomSheet extends StatefulWidget {
   final String userId;
@@ -102,7 +104,7 @@ class _ViNotificationsBottomSheetState
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting &&
                     !snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: VistaLoader(size: 88));
                 }
 
                 if (snapshot.hasError) {
@@ -122,25 +124,12 @@ class _ViNotificationsBottomSheetState
                     .toList();
 
                 if (notifications.isEmpty) {
-                  return Center(
-                    child: Semantics(
-                      label: 'You have no notifications yet',
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.notifications_off_outlined,
-                            size: 60,
-                            color: subTextColor.withValues(alpha: 0.5),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            "No notifications yet",
-                            style: TextStyle(color: subTextColor, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ),
+                  return VistaEmptyState(
+                    title: 'No notifications yet',
+                    message:
+                        'Updates from your caretaker and MSWD show up here.',
+                    isDarkMode: widget.isDarkMode,
+                    mascotSize: 130,
                   );
                 }
 
