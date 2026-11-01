@@ -5,6 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:shimmer/shimmer.dart'; // Added shimmer
 import 'package:seelai_app/themes/constants.dart';
 import 'detection_detail_screen.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class AllDetectionsScreen extends StatefulWidget {
   final List<Map<String, dynamic>> detections;
@@ -529,54 +530,10 @@ class _AllDetectionsScreenState extends State<AllDetectionsScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.06,
-        ),
-        padding: EdgeInsets.symmetric(
-          vertical: spacingXLarge,
-          horizontal: spacingLarge,
-        ),
-        decoration: BoxDecoration(
-          color: widget.theme.cardColor,
-          borderRadius: BorderRadius.circular(radiusLarge),
-          boxShadow: widget.isDarkMode ? [] : softShadow,
-          border: Border.all(
-            color: widget.theme.subtextColor.withOpacity(0.2),
-            width: 1,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.search_off_rounded,
-              color: widget.theme.subtextColor.withOpacity(0.5),
-              size: 48,
-            ),
-            SizedBox(height: spacingMedium),
-            Text(
-              'No $_selectedFilter records',
-              style: bodyBold.copyWith(
-                fontSize: 16,
-                color: widget.theme.textColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: spacingSmall),
-            Text(
-              'Try scanning with $_selectedFilter mode',
-              style: caption.copyWith(
-                fontSize: 13,
-                color: widget.theme.subtextColor,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return VistaEmptyState(
+      title: 'No $_selectedFilter records',
+      message: 'Try scanning with $_selectedFilter mode',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
