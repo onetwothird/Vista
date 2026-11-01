@@ -13,6 +13,9 @@ import 'package:seelai_app/roles/mswd/home/sections/profile_content/about_vista_
 import 'package:seelai_app/roles/mswd/home/sections/profile_content/privacy_policy_screen.dart';
 
 import 'package:seelai_app/themes/palette.dart';
+import 'package:seelai_app/shared/widgets/profile_photo_editor.dart';
+import 'package:seelai_app/shared/widgets/accessibility_panel.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class MoreContent extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -63,7 +66,7 @@ class _MoreContentState extends State<MoreContent> {
 
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
@@ -202,6 +205,11 @@ class _MoreContentState extends State<MoreContent> {
 
           _buildCenteredProfileImage(),
           const SizedBox(height: 32),
+
+          _buildSettingsGroup(
+            title: 'Seeing and reading',
+            children: [AccessibilityPanel(isDarkMode: widget.isDarkMode)],
+          ),
 
           _buildSettingsGroup(
             title: 'Administrative Details',
@@ -355,7 +363,7 @@ class _MoreContentState extends State<MoreContent> {
           ),
 
           _buildSettingsGroup(
-            title: 'Danger Zone',
+            title: '',
             children: [
               _buildSettingsTile(
                 title: 'Sign Out',
@@ -373,11 +381,7 @@ class _MoreContentState extends State<MoreContent> {
   }
 
   Widget _buildCenteredProfileImage() {
-    final profileUrl = _userData['profileImageUrl'] as String?;
     final name = _userData['name'] ?? 'Admin';
-    final initial = name.toString().isNotEmpty
-        ? name.toString()[0].toUpperCase()
-        : 'A';
 
     return Center(
       child: Column(
@@ -386,38 +390,11 @@ class _MoreContentState extends State<MoreContent> {
             clipBehavior: Clip.none,
             alignment: Alignment.center,
             children: [
-              Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: widget.isDarkMode ? Colors.white24 : Palette.ink,
-                    width: 1.0,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: ClipOval(
-                  child: (profileUrl != null && profileUrl.isNotEmpty)
-                      ? Image.network(
-                          profileUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildGradientFallback(initial);
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return _buildGradientFallback('', isLoading: true);
-                          },
-                        )
-                      : _buildGradientFallback(initial),
-                ),
+              ProfilePhotoEditor(
+                userData: _userData,
+                isDarkMode: widget.isDarkMode,
+                onChanged: (url) =>
+                    setState(() => _userData['profileImageUrl'] = url),
               ),
               // MSWD Verified Badge
               Positioned(
@@ -467,37 +444,6 @@ class _MoreContentState extends State<MoreContent> {
     );
   }
 
-  Widget _buildGradientFallback(String initial, {bool isLoading = false}) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [_colTracking, _colTracking.withValues(alpha: 0.6)],
-        ),
-      ),
-      child: Center(
-        child: isLoading
-            ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2.5,
-                ),
-              )
-            : Text(
-                initial,
-                style: const TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-      ),
-    );
-  }
-
   Widget _buildSettingsGroup({
     required String title,
     required List<Widget> children,
@@ -509,14 +455,14 @@ class _MoreContentState extends State<MoreContent> {
         children: [
           if (title.isNotEmpty) ...[
             Padding(
-              padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+              padding: const EdgeInsets.only(left: 4.0, bottom: 10.0),
               child: Text(
-                title.toUpperCase(),
+                title,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  color: widget.theme.subtextColor.withValues(alpha: 0.8),
-                  letterSpacing: 1.2,
+                  color: widget.theme.textColor,
+                  letterSpacing: 0,
                 ),
               ),
             ),
