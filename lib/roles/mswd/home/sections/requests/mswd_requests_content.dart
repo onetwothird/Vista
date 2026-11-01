@@ -11,6 +11,8 @@ import 'dart:async';
 import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:seelai_app/shared/widgets/vista_header.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class RequestsContent extends StatefulWidget {
   final bool isDarkMode;
@@ -130,7 +132,7 @@ class _RequestsContentState extends State<RequestsContent>
 
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
@@ -862,12 +864,10 @@ class _RequestsContentState extends State<RequestsContent>
     }).toList();
 
     if (filtered.isEmpty) {
-      IconData emptyIcon = Icons.inbox_rounded;
       String emptyTitle = 'No requests found';
       String emptySub = 'Try adjusting your filters or search criteria.';
 
       if (_selectedFilterIndex == 5) {
-        emptyIcon = Icons.delete_outline_rounded;
         emptyTitle = 'Trash is Empty';
         emptySub = 'Deleted requests will appear here.';
       }
@@ -888,19 +888,11 @@ class _RequestsContentState extends State<RequestsContent>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: widget.isDarkMode
-                    ? Colors.white10
-                    : Colors.black.withValues(alpha: 0.03),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                emptyIcon,
-                size: 48,
-                color: widget.theme.subtextColor.withValues(alpha: 0.5),
-              ),
+            VistaEmptyState(
+              title: emptyTitle,
+              message: emptySub,
+              isDarkMode: widget.isDarkMode,
+              mascotSize: 130,
             ),
             const SizedBox(height: 20),
             Text(
