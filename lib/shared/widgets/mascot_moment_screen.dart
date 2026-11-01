@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:seelai_app/screens/onboarding_screen.dart';
+import 'package:seelai_app/shared/nickname.dart';
 import 'package:seelai_app/themes/palette.dart';
 
 enum MascotMood { celebrating, sad }
@@ -16,18 +17,24 @@ class MascotMomentScreen extends StatefulWidget {
     required this.mood,
     required this.next,
     this.name,
+    this.userData,
     this.clearStack = false,
   });
 
   final MascotMood mood;
   final WidgetBuilder next;
   final String? name;
+
+  /// The signed-in user's record. When it has no nickname yet, the pup asks
+  /// for one before moving on, and saves it into this same map.
+  final Map<String, dynamic>? userData;
   final bool clearStack;
 
   /// Replaces the login screen with the celebration, then [next].
   static void showSignedIn(
     BuildContext context, {
     String? name,
+    Map<String, dynamic>? userData,
     required WidgetBuilder next,
   }) {
     Navigator.of(context).pushReplacement(
@@ -35,6 +42,7 @@ class MascotMomentScreen extends StatefulWidget {
         MascotMomentScreen(
           mood: MascotMood.celebrating,
           name: name,
+          userData: userData,
           next: next,
         ),
       ),
@@ -100,6 +108,12 @@ class _MascotMomentScreenState extends State<MascotMomentScreen>
   bool _reduceMotion = false;
 
   bool get _celebrating => widget.mood == MascotMood.celebrating;
+
+  /// True while the pup is asking for a nickname; the screen waits.
+  late bool _askingNickname =
+      _celebrating &&
+      widget.userData != null &&
+      Nickname.of(widget.userData) == null;
   bool get _cheeredUp => !_celebrating && _taps >= _cheerUpTaps;
   bool get _happy => _celebrating || _cheeredUp;
 
@@ -152,7 +166,7 @@ class _MascotMomentScreenState extends State<MascotMomentScreen>
           });
         }
       }
-      _countdown.forward();
+      if (!_askingNickname) _countdown.forward();
     }
   }
 
@@ -214,6 +228,29 @@ class _MascotMomentScreenState extends State<MascotMomentScreen>
       }
     }
     // Give the person time to play before moving on.
+    if (!_askingNickname) _countdown.forward(from: 0);
+  }
+
+  Future<void> _saveNickname(String value) async {
+    final data = widget.userData;
+    if (data == null) return;
+    setState(() {
+      data['nickname'] = value.trim();
+      _askingNickname = false;
+      _bubble = 'Nice to meet you, ${value.trim()}!';
+    });
+    if (!_reduceMotion) _jump.forward(from: 0);
+    _burst(50);
+    _countdown.forward(from: 0);
+    try {
+      await Nickname.save(data, value);
+    } catch (_) {
+      // Still used for this session; it can be set again from home.
+    }
+  }
+
+  void _skipNickname() {
+    setState(() => _askingNickname = false);
     _countdown.forward(from: 0);
   }
 
@@ -230,7 +267,9 @@ class _MascotMomentScreenState extends State<MascotMomentScreen>
 
   String get _title {
     if (_celebrating) {
-      final first = (widget.name ?? '').trim().split(RegExp(r'\s+')).first;
+      final nick = Nickname.of(widget.userData);
+      final first =
+          nick ?? (widget.name ?? '').trim().split(RegExp(r'\s+')).first;
       return first.isEmpty ? "You're signed in!" : 'Welcome back, $first!';
     }
     return "You're signed out";
@@ -263,41 +302,57 @@ class _MascotMomentScreenState extends State<MascotMomentScreen>
                     const SizedBox(height: 8),
                     _buildMascot(mascotSize),
                     const Spacer(),
-                    Semantics(
-                      header: true,
-                      liveRegion: true,
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        child: Text(
-                          _title,
-                          key: ValueKey(_title),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            height: 1.15,
-                            fontWeight: FontWeight.w700,
-                            color: Palette.ink,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 250),
-                      child: Text(
-                        _message,
-                        key: ValueKey(_message),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          height: 1.45,
-                          color: Palette.inkMuted,
-                        ),
-                      ),
+                      child: _askingNickname
+                          ? NicknameForm(
+                              key: const ValueKey('nickname'),
+                              initial: Nickname.suggestion(widget.userData),
+                              submitLabel: 'Save and continue',
+                              onSubmit: _saveNickname,
+                              onSkip: _skipNickname,
+                            )
+                          : Column(
+                              key: const ValueKey('done'),
+                              children: [
+                                Semantics(
+                                  header: true,
+                                  liveRegion: true,
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 250),
+                                    child: Text(
+                                      _title,
+                                      key: ValueKey(_title),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 30,
+                                        height: 1.15,
+                                        fontWeight: FontWeight.w700,
+                                        color: Palette.ink,
+                                        letterSpacing: -0.3,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 250),
+                                  child: Text(
+                                    _message,
+                                    key: ValueKey(_message),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      height: 1.45,
+                                      color: Palette.inkMuted,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 28),
+                                _buildContinueButton(),
+                              ],
+                            ),
                     ),
-                    const SizedBox(height: 28),
-                    _buildContinueButton(),
                   ],
                 ),
               ),
