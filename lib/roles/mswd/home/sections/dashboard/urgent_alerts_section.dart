@@ -6,6 +6,8 @@ import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:seelai_app/roles/caretaker/home/sections/requests_screen/request_model.dart';
 import 'package:seelai_app/roles/mswd/home/sections/requests/requests_details.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class UrgentAlertsSection extends StatefulWidget {
   final bool isDarkMode;
@@ -158,7 +160,7 @@ class _UrgentAlertsSectionState extends State<UrgentAlertsSection> {
     if (_isLoading) {
       return const Padding(
         padding: EdgeInsets.all(20.0),
-        child: Center(child: CircularProgressIndicator(color: Palette.alert)),
+        child: Center(child: VistaLoader(size: 72)),
       );
     }
 
@@ -178,39 +180,7 @@ class _UrgentAlertsSectionState extends State<UrgentAlertsSection> {
   }
 
   Widget _buildEmptyState(String message) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-      decoration: BoxDecoration(
-        color: widget.theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.check_circle_outline_rounded,
-            size: 32,
-            color: Palette.success.withValues(alpha: 0.5),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            message,
-            style: body.copyWith(
-              color: widget.theme.subtextColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+    return VistaEmptyState(title: message, isDarkMode: widget.isDarkMode);
   }
 
   Widget _buildAlertCard(RequestModel request) {
