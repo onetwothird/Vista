@@ -6,6 +6,8 @@ import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -46,7 +48,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
@@ -932,7 +934,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           color: cardColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        child: const Center(child: CircularProgressIndicator()),
+        child: const Center(child: VistaLoader(size: 96)),
       );
     }
 
