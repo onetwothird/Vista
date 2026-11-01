@@ -9,6 +9,8 @@ import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/firebase/mswd/announcement_service.dart';
 import 'package:seelai_app/roles/mswd/home/model/announcement_model.dart';
 import 'package:seelai_app/roles/partially_sighted/home/sections/home_screen/screens/all_announcements.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class AnnouncementSection extends StatefulWidget {
   final bool isDarkMode;
@@ -49,7 +51,7 @@ class _AnnouncementSectionState extends State<AnnouncementSection> {
   // --- NEW TTS INITIALIZATION ---
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
     await _flutterTts.awaitSpeakCompletion(true);
@@ -372,64 +374,20 @@ class _AnnouncementSectionState extends State<AnnouncementSection> {
   }
 
   Widget _buildEmptyAnnouncementsCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        vertical: spacingXLarge,
-        horizontal: spacingLarge,
-      ),
-      decoration: BoxDecoration(
-        color: widget.theme.cardColor,
-        borderRadius: BorderRadius.circular(radiusLarge),
-        boxShadow: widget.isDarkMode ? [] : softShadow,
-        border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.notifications_none_rounded,
-            color: widget.theme.subtextColor.withValues(alpha: 0.5),
-            size: 48,
-          ),
-          const SizedBox(height: spacingMedium),
-          Text(
-            'No announcements yet',
-            style: bodyBold.copyWith(
-              fontSize: 16,
-              color: widget.theme.textColor,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: spacingSmall),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: spacingMedium),
-            child: Text(
-              'Check back later for updates from MSWD',
-              style: caption.copyWith(
-                fontSize: 13,
-                color: widget.theme.subtextColor,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'No announcements yet',
+      message: 'News from MSWD shows up here.',
+      isDarkMode: widget.isDarkMode,
+      mascotSize: 110,
     );
   }
 
   Widget _buildAnnouncementCard(AnnouncementModel announcement) {
     String timeAgo = _getTimeAgo(announcement.timestamp);
     IconData icon = _getSafeIcon(announcement.iconCodePoint);
-    Color color = Color(announcement.colorValue);
+    // One brand colour for every announcement, whatever was picked when
+    // it was posted, so the feed stays calm and readable.
+    final Color color = Palette.brand(widget.isDarkMode);
     bool isSpeaking =
         _currentlySpeakingId ==
         announcement.id; // Check if this card is playing
