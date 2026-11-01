@@ -6,6 +6,8 @@ import 'package:seelai_app/roles/caretaker/home/sections/requests_screen/request
 import 'package:seelai_app/firebase/caretaker/request_service.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:seelai_app/roles/caretaker/home/sections/requests_screen/request_details_screen.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class NotificationsBottomSheet extends StatefulWidget {
   final String caretakerId;
@@ -100,7 +102,7 @@ class _NotificationsBottomSheetState extends State<NotificationsBottomSheet> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting &&
                     !snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: VistaLoader(size: 88));
                 }
 
                 if (snapshot.hasError) {
@@ -114,22 +116,11 @@ class _NotificationsBottomSheetState extends State<NotificationsBottomSheet> {
 
                 final requests = snapshot.data ?? [];
                 if (requests.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.notifications_off_outlined,
-                          size: 60,
-                          color: subTextColor.withValues(alpha: 0.5),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "No notifications yet",
-                          style: TextStyle(color: subTextColor, fontSize: 16),
-                        ),
-                      ],
-                    ),
+                  return VistaEmptyState(
+                    title: 'No notifications yet',
+                    message: 'New requests from your patients show up here.',
+                    isDarkMode: widget.isDarkMode,
+                    mascotSize: 130,
                   );
                 }
 
