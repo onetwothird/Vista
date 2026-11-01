@@ -6,6 +6,7 @@ import 'package:seelai_app/shared/widgets/vista_header.dart';
 class HeaderSection extends StatelessWidget {
   final String caretakerName;
   final String? profileImageUrl;
+  final Map<String, dynamic>? userData;
   final bool isDarkMode;
   final int pendingRequestsCount;
   final int activeRequestsCount;
@@ -19,6 +20,7 @@ class HeaderSection extends StatelessWidget {
     super.key,
     required this.caretakerName,
     this.profileImageUrl,
+    this.userData,
     required this.isDarkMode,
     required this.pendingRequestsCount,
     this.activeRequestsCount = 0,
@@ -47,6 +49,7 @@ class HeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return VistaHomeHeader(
+      userData: userData,
       fullName: caretakerName,
       fallbackName: 'Caretaker',
       profileImageUrl: profileImageUrl,
