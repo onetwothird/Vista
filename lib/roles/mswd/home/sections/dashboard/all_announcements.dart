@@ -5,6 +5,7 @@ import 'package:flutter_tts/flutter_tts.dart'; // Added TTS import
 import 'package:shimmer/shimmer.dart';
 import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/roles/mswd/home/model/announcement_model.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class AllAnnouncementsPage extends StatefulWidget {
   final bool isDarkMode;
@@ -42,7 +43,7 @@ class _AllAnnouncementsPageState extends State<AllAnnouncementsPage> {
   // Added TTS initialization method
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
@@ -208,7 +209,9 @@ class _AllAnnouncementsPageState extends State<AllAnnouncementsPage> {
   }) {
     String timeAgo = _getTimeAgo(announcement.timestamp);
     IconData icon = _getSafeIcon(announcement.iconCodePoint);
-    Color color = Color(announcement.colorValue);
+    // One brand colour for every announcement, whatever was picked when
+    // it was posted, so the feed stays calm and readable.
+    final Color color = Palette.brand(widget.isDarkMode);
 
     return Container(
       padding: EdgeInsets.all(spacingMedium),
