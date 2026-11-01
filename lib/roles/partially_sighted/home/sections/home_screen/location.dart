@@ -1,6 +1,7 @@
 // File: lib/roles/partially_sighted/home/sections/home_screen/location.dart
 
 import 'package:flutter/material.dart';
+import 'package:seelai_app/shared/widgets/vista_header.dart';
 import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/roles/partially_sighted/home/sections/home_screen/widgets/location_map_widget.dart';
 
@@ -28,59 +29,29 @@ class LocationSection extends StatelessWidget {
   }
 
   Widget _buildLocationSection() {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(radiusXLarge),
-        boxShadow: isDarkMode ? [] : softShadow,
-        border: Border.all(
-          color: isDarkMode
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-          width: 1,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        VistaSectionTitle(
+          title: 'Your location',
+          subtitle: 'Your caretaker can see this',
+          isDarkMode: isDarkMode,
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(spacingLarge),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Your Location',
-                  style: bodyBold.copyWith(
-                    fontSize: 16,
-                    color: theme.textColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Share with Caretaker',
-                  style: caption.copyWith(
-                    fontSize: 12,
-                    color: theme.subtextColor,
-                  ),
-                ),
-              ],
-            ),
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Palette.border(isDarkMode)),
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(radiusXLarge),
-              bottomRight: Radius.circular(radiusXLarge),
-            ),
-            child: LocationMapWidget(
-              isDarkMode: isDarkMode,
-              theme: theme,
-              userId: userId,
-              userData: userData,
-            ),
+          child: LocationMapWidget(
+            isDarkMode: isDarkMode,
+            theme: theme,
+            userId: userId,
+            userData: userData,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -89,33 +60,31 @@ class LocationSection extends StatelessWidget {
       padding: EdgeInsets.all(spacingXLarge),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(radiusXLarge),
-        boxShadow: isDarkMode ? [] : softShadow,
-        border: Border.all(
-          color: isDarkMode
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Palette.border(isDarkMode)),
       ),
       child: Column(
         children: [
           Container(
             padding: EdgeInsets.all(spacingLarge),
             decoration: BoxDecoration(
-              color: error.withValues(alpha: 0.1),
+              color: Palette.alertTint,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.location_off_rounded, size: 48, color: error),
+            child: Icon(
+              Icons.location_off_rounded,
+              size: 40,
+              color: Palette.alert,
+            ),
           ),
           SizedBox(height: spacingLarge),
           Text(
-            'Location Unavailable',
+            'Location unavailable',
             style: bodyBold.copyWith(fontSize: 16, color: theme.textColor),
           ),
           SizedBox(height: spacingSmall),
           Text(
-            'Please log in to use location tracking',
+            'Sign in to share your location with your caretaker.',
             style: body.copyWith(fontSize: 13, color: theme.subtextColor),
             textAlign: TextAlign.center,
           ),
