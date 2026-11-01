@@ -15,6 +15,8 @@ import 'message_contact.dart';
 import 'edit_contact.dart';
 
 import 'package:seelai_app/shared/widgets/vista_header.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class ContactsContent extends StatefulWidget {
   final bool isDarkMode;
@@ -103,7 +105,7 @@ class _ContactsContentState extends State<ContactsContent>
 
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
@@ -878,60 +880,10 @@ class _ContactsContentState extends State<ContactsContent>
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(spacingXLarge * 1.5),
-      decoration: BoxDecoration(
-        color: widget.theme.cardColor,
-        borderRadius: BorderRadius.circular(radiusXLarge),
-        border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
-        ),
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(spacingXLarge),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _primaryColor.withValues(alpha: 0.2),
-                  _primaryColor.withValues(alpha: 0.1),
-                ],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.contacts_rounded,
-              size: 64,
-              color: _primaryColor.withValues(alpha: 0.5),
-            ),
-          ),
-          const SizedBox(height: spacingLarge),
-          Text(
-            'No contacts yet',
-            style: bodyBold.copyWith(
-              color: widget.theme.textColor,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: spacingSmall),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              'Add your emergency contacts and caretakers to stay connected',
-              style: body.copyWith(
-                color: widget.theme.subtextColor,
-                fontSize: 14,
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'No contacts yet',
+      message: 'Add your emergency contacts and caretakers to stay connected',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
