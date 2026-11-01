@@ -5,6 +5,7 @@ import 'package:shimmer/shimmer.dart'; // Added shimmer
 import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/roles/mswd/home/model/announcement_model.dart';
 import 'package:intl/intl.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class AllAnnouncementsCaretakerPage extends StatefulWidget {
   final bool isDarkMode;
@@ -222,7 +223,9 @@ class _AllAnnouncementsCaretakerPageState
   Widget _buildModernCard(AnnouncementModel announcement) {
     // Replaced non-constant IconData invocation with safe constant mapping
     IconData icon = _getSafeIcon(announcement.iconCodePoint);
-    Color color = Color(announcement.colorValue);
+    // One brand colour for every announcement, whatever was picked when
+    // it was posted, so the feed stays calm and readable.
+    final Color color = Palette.brand(widget.isDarkMode);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -338,53 +341,10 @@ class _AllAnnouncementsCaretakerPageState
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: widget.theme.cardColor,
-              shape: BoxShape.circle,
-              boxShadow: widget.isDarkMode
-                  ? []
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-              border: Border.all(
-                color: widget.isDarkMode
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.black.withValues(alpha: 0.05),
-                width: 1,
-              ),
-            ),
-            child: Icon(
-              Icons.notifications_none_rounded,
-              color: widget.theme.subtextColor.withOpacity(0.5),
-              size: 48,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'All caught up!',
-            style: h3.copyWith(
-              fontSize: 20,
-              color: widget.theme.textColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'No new announcements at the moment.',
-            style: body.copyWith(color: widget.theme.subtextColor),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'All caught up!',
+      message: 'No new announcements at the moment.',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
