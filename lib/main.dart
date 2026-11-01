@@ -7,6 +7,7 @@ import 'package:seelai_app/core/firebase_options.dart';
 import 'package:seelai_app/screens/splash_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:seelai_app/themes/vista_theme.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -90,6 +91,7 @@ void main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await themeController.load();
+  await a11y.load();
 
   runApp(const MainApp());
 
@@ -107,15 +109,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: themeController,
-      builder: (context, dark, _) => MaterialApp(
+    return ListenableBuilder(
+      listenable: Listenable.merge([themeController, a11y]),
+      builder: (context, _) => MaterialApp(
         title: 'Vista',
         debugShowCheckedModeBanner: false,
         theme: _light,
         darkTheme: _dark,
-        themeMode: dark ? ThemeMode.dark : ThemeMode.light,
+        themeMode: themeController.value ? ThemeMode.dark : ThemeMode.light,
         themeAnimationDuration: const Duration(milliseconds: 150),
+        // Text size, bold text, contrast and motion from Vista's settings.
+        builder: (context, child) =>
+            MediaQuery(data: a11y.apply(MediaQuery.of(context)), child: child!),
         home: const AnimatedSplashScreenWidget(),
       ),
     );
