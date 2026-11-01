@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart'; // Added shimmer
 import 'package:seelai_app/firebase/firebase_services.dart';
 
 import 'package:seelai_app/themes/palette.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class SystemActivityLogsScreen extends StatefulWidget {
   final dynamic theme;
@@ -391,27 +392,11 @@ class _SystemActivityLogsScreenState extends State<SystemActivityLogsScreen> {
 
                   // Unified Card Layout
                   if (_filteredLogs.isEmpty)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.history_rounded,
-                              size: 48,
-                              color: subTextColor.withValues(alpha: 0.3),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No activity records found.',
-                              style: TextStyle(
-                                color: subTextColor,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    VistaEmptyState(
+                      title: 'No activity yet',
+                      message: 'Actions taken in Vista are recorded here.',
+                      isDarkMode: widget.isDarkMode,
+                      mascotSize: 130,
                     )
                   else
                     Column(
