@@ -9,6 +9,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:seelai_app/firebase/partially_sighted/camera_service.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:seelai_app/storage/cloudinary_service.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class ObjectDetectionController {
   final CameraService cameraService;
@@ -140,7 +141,7 @@ class ObjectDetectionController {
   Future<void> _initializeTts() async {
     try {
       await _flutterTts.setLanguage("fil-PH");
-      await _flutterTts.setSpeechRate(0.5);
+      await _flutterTts.setSpeechRate(a11y.speechRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
 
