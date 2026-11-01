@@ -42,7 +42,7 @@ class VistaAvatar extends StatelessWidget {
         style: TextStyle(
           fontSize: size * 0.42,
           fontWeight: FontWeight.w700,
-          color: isDarkMode ? Palette.nightText : Palette.violetDeep,
+          color: isDarkMode ? Palette.violetDeep : Colors.white,
         ),
       ),
     );
@@ -53,8 +53,7 @@ class VistaAvatar extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isDarkMode ? Palette.violetTintNight : Palette.violetTint,
-        border: Border.all(color: Palette.border(isDarkMode)),
+        color: isDarkMode ? Palette.honey : Palette.violet,
       ),
       child: url == null || url.isEmpty
           ? fallback
