@@ -238,6 +238,7 @@ class _CaretakerHomeScreenState extends State<CaretakerHomeScreen> {
           extendBody: true,
           backgroundColor: theme.backgroundColor,
           body: SafeArea(
+            top: false,
             bottom: false,
             child: NotificationListener<UserScrollNotification>(
               onNotification: (n) {
@@ -251,10 +252,13 @@ class _CaretakerHomeScreenState extends State<CaretakerHomeScreen> {
               child: Stack(
                 children: [
                   _buildTabs(theme, dark),
-                  CaretakerMissedCallAlertSection(
-                    caretakerId: _userId,
-                    isDarkMode: dark,
-                    theme: theme,
+                  SafeArea(
+                    bottom: false,
+                    child: CaretakerMissedCallAlertSection(
+                      caretakerId: _userId,
+                      isDarkMode: dark,
+                      theme: theme,
+                    ),
                   ),
                 ],
               ),
@@ -283,8 +287,12 @@ class _CaretakerHomeScreenState extends State<CaretakerHomeScreen> {
   }
 
   Widget _buildTabs(_AppTheme theme, bool dark) {
-    Widget lazy(int index, Widget Function() build) =>
-        _visitedTabs.contains(index) ? build() : const SizedBox.shrink();
+    Widget lazy(int index, Widget Function() build) {
+      if (!_visitedTabs.contains(index)) return const SizedBox.shrink();
+      // The home tab's header runs up behind the status bar; the rest
+      // keep a normal top inset.
+      return index == 0 ? build() : SafeArea(bottom: false, child: build());
+    }
 
     return IndexedStack(
       index: _selectedIndex,
@@ -300,6 +308,7 @@ class _CaretakerHomeScreenState extends State<CaretakerHomeScreen> {
                   caretakerName: widget.userData['name'] ?? '',
                   profileImageUrl:
                       widget.userData['profileImageUrl'] as String?,
+                  userData: widget.userData,
                   isDarkMode: dark,
                   pendingRequestsCount: _pendingRequestsCount,
                   onToggleDarkMode: _toggleDarkMode,
@@ -387,21 +396,23 @@ class _AppTheme {
     required this.cardColor,
   });
 
-  static const light = _AppTheme(
-    backgroundGradient: LinearGradient(colors: [Palette.paper, Palette.paper]),
+  static _AppTheme get light => _AppTheme(
+    backgroundGradient: const LinearGradient(
+      colors: [Palette.paper, Palette.paper],
+    ),
     backgroundColor: Palette.paper,
-    textColor: Palette.ink,
-    subtextColor: Palette.inkMuted,
+    textColor: Palette.text(false),
+    subtextColor: Palette.muted(false),
     cardColor: Palette.surface,
   );
 
-  static const dark = _AppTheme(
-    backgroundGradient: LinearGradient(
+  static _AppTheme get dark => _AppTheme(
+    backgroundGradient: const LinearGradient(
       colors: [Palette.nightPage, Palette.nightPage],
     ),
     backgroundColor: Palette.nightPage,
-    textColor: Palette.nightText,
-    subtextColor: Palette.nightMuted,
+    textColor: Palette.text(true),
+    subtextColor: Palette.muted(true),
     cardColor: Palette.nightSurface,
   );
 }
