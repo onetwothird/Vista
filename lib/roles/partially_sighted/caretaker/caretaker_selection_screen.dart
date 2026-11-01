@@ -5,6 +5,7 @@ import 'package:seelai_app/mobile/loading_overlay.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'package:seelai_app/themes/palette.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class CaretakerSelectionScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -444,23 +445,7 @@ class _CaretakerSelectionScreenState extends State<CaretakerSelectionScreen>
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.person_off_rounded, size: 60, color: Palette.line),
-          const SizedBox(height: 16),
-          Text(
-            "No caretakers found",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Palette.inkSubtle,
-            ),
-          ),
-        ],
-      ),
-    );
+    return VistaEmptyState(title: "No caretakers found", isDarkMode: false);
   }
 
   Widget _buildCaretakerCard({
