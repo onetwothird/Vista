@@ -6,6 +6,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/roles/partially_sighted/models/emergency_hotline_model.dart';
 import 'package:seelai_app/firebase/partially_sighted/emergency_hotline_service.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class EmergencyHotlinesScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -259,27 +260,10 @@ class _EmergencyHotlinesScreenState extends State<EmergencyHotlinesScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.phone_in_talk_rounded,
-            size: 80,
-            color: widget.theme.subtextColor.withValues(alpha: 0.5),
-          ),
-          const SizedBox(height: spacingMedium),
-          Text(
-            'No hotlines available',
-            style: h3.copyWith(color: widget.theme.textColor),
-          ),
-          const SizedBox(height: spacingSmall),
-          Text(
-            'Your MSWD officer will add contacts soon.',
-            style: body.copyWith(color: widget.theme.subtextColor),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'No hotlines available',
+      message: 'Your MSWD officer will add contacts soon.',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
