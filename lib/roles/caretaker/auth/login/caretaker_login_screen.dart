@@ -175,12 +175,10 @@ class _CaretakerLoginScreenState extends State<CaretakerLoginScreen>
                               child: ElevatedButton(
                                 onPressed: _isLoading ? null : _handleLogin,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Palette.honey,
-                                  foregroundColor: Palette.violetDeep,
-                                  disabledBackgroundColor: Palette.honey
-                                      .withValues(alpha: 0.5),
                                   elevation: 0,
-                                  shape: const StadiumBorder(),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                 ),
                                 child: const Text(
                                   'Sign in',
@@ -227,7 +225,9 @@ class _CaretakerLoginScreenState extends State<CaretakerLoginScreen>
                                     color: Palette.border(dark),
                                     width: 1.5,
                                   ),
-                                  shape: const StadiumBorder(),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                   backgroundColor: Palette.card(dark),
                                   foregroundColor: textColor,
                                   elevation: 0,
@@ -494,6 +494,7 @@ class _CaretakerLoginScreenState extends State<CaretakerLoginScreen>
         MascotMomentScreen.showSignedIn(
           context,
           name: userData['name']?.toString(),
+          userData: userData,
           next: (context) => CaretakerHomeScreen(userData: userData),
         );
       } else {
@@ -507,10 +508,7 @@ class _CaretakerLoginScreenState extends State<CaretakerLoginScreen>
           ),
         );
 
-        VistaToast.info(
-          context,
-          'Almost there! Please complete your profile.',
-        );
+        VistaToast.info(context, 'Almost there! Please complete your profile.');
       }
     } catch (e) {
       if (mounted) {
@@ -566,6 +564,7 @@ class _CaretakerLoginScreenState extends State<CaretakerLoginScreen>
         MascotMomentScreen.showSignedIn(
           context,
           name: userData['name']?.toString(),
+          userData: userData,
           next: (context) => CaretakerHomeScreen(userData: userData),
         );
       } else {
