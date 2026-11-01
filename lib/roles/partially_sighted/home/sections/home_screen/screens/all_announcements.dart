@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart'; // --- ADDED TTS ---
 import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/roles/mswd/home/model/announcement_model.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class AllAnnouncementsVIPage extends StatefulWidget {
   final bool isDarkMode;
@@ -37,7 +39,7 @@ class _AllAnnouncementsVIPageState extends State<AllAnnouncementsVIPage> {
   // --- NEW TTS SETUP ---
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
     await _flutterTts.awaitSpeakCompletion(true);
@@ -119,46 +121,19 @@ class _AllAnnouncementsVIPageState extends State<AllAnnouncementsVIPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(spacingLarge),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.notifications_none_rounded,
-              color: widget.theme.subtextColor.withOpacity(0.5),
-              size: 64,
-            ),
-            SizedBox(height: spacingMedium),
-            Text(
-              'No announcements yet',
-              style: bodyBold.copyWith(
-                fontSize: 16,
-                color: widget.theme.textColor,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: spacingSmall),
-            Text(
-              'Check back later for updates from MSWD',
-              style: caption.copyWith(
-                fontSize: 13,
-                color: widget.theme.subtextColor,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+    return VistaEmptyState(
+      title: 'No announcements yet',
+      message: 'Check back later for updates from MSWD',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
   Widget _buildAnnouncementCard(AnnouncementModel announcement) {
     String timeAgo = _getTimeAgo(announcement.timestamp);
     IconData icon = _getSafeIcon(announcement.iconCodePoint);
-    Color color = Color(announcement.colorValue);
+    // One brand colour for every announcement, whatever was picked when
+    // it was posted, so the feed stays calm and readable.
+    final Color color = Palette.brand(widget.isDarkMode);
     bool isSpeaking =
         _currentlySpeakingId == announcement.id; // Check TTS state
 
