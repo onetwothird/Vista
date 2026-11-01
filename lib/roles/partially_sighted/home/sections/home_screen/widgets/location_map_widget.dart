@@ -12,6 +12,7 @@ import 'package:seelai_app/firebase/firebase_services.dart';
 import 'dart:async';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'map_marker_helper.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class LocationMapWidget extends StatefulWidget {
   final bool isDarkMode;
@@ -96,7 +97,7 @@ class _LocationMapWidgetState extends State<LocationMapWidget>
   Future<void> _initializeTts() async {
     _flutterTts = FlutterTts();
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
