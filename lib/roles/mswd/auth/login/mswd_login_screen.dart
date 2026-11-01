@@ -173,12 +173,10 @@ class _MSWDLoginScreenState extends State<MSWDLoginScreen>
                               child: ElevatedButton(
                                 onPressed: _isLoading ? null : _handleLogin,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Palette.honey,
-                                  foregroundColor: Palette.violetDeep,
-                                  disabledBackgroundColor: Palette.honey
-                                      .withValues(alpha: 0.5),
                                   elevation: 0,
-                                  shape: const StadiumBorder(),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                 ),
                                 child: const Text(
                                   'Sign in',
@@ -225,7 +223,9 @@ class _MSWDLoginScreenState extends State<MSWDLoginScreen>
                                     color: Palette.border(dark),
                                     width: 1.5,
                                   ),
-                                  shape: const StadiumBorder(),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                   backgroundColor: Palette.card(dark),
                                   foregroundColor: textColor,
                                   elevation: 0,
@@ -425,10 +425,7 @@ class _MSWDLoginScreenState extends State<MSWDLoginScreen>
 
                 // 4. GUARD: Check if the main screen is still active before showing the SnackBar
                 if (!parentContext.mounted) return;
-                VistaToast.success(
-                  parentContext,
-                  'Password reset email sent!',
-                );
+                VistaToast.success(parentContext, 'Password reset email sent!');
               } catch (e) {
                 // 5. GUARD: Check if the dialog is still open before popping on error
                 if (!dialogContext.mounted) return;
@@ -470,6 +467,7 @@ class _MSWDLoginScreenState extends State<MSWDLoginScreen>
             MascotMomentScreen.showSignedIn(
               context,
               name: userData['name']?.toString(),
+              userData: userData,
               next: (context) => MSWDHomeScreen(userData: userData),
             );
           }
@@ -532,6 +530,7 @@ class _MSWDLoginScreenState extends State<MSWDLoginScreen>
           MascotMomentScreen.showSignedIn(
             context,
             name: userData['name']?.toString(),
+            userData: userData,
             next: (context) => MSWDHomeScreen(userData: userData),
           );
         }
