@@ -9,6 +9,7 @@ import 'package:seelai_app/roles/caretaker/home/sections/requests_screen/request
 import 'package:seelai_app/firebase/caretaker/request_service.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:intl/intl.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class RequestDetailsScreen extends StatefulWidget {
   final RequestModel request;
@@ -66,7 +67,7 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
   Future<void> _initializeTts() async {
     try {
       await _flutterTts.setLanguage("en-US");
-      await _flutterTts.setSpeechRate(0.5);
+      await _flutterTts.setSpeechRate(a11y.speechRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
     } catch (e) {
