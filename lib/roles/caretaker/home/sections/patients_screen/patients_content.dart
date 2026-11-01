@@ -14,6 +14,7 @@ import 'call_patients.dart';
 import 'message_patients.dart';
 
 import 'package:seelai_app/shared/widgets/vista_header.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class PatientsContent extends StatefulWidget {
   final bool isDarkMode;
@@ -493,61 +494,11 @@ class _PatientsContentState extends State<PatientsContent>
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(spacingXLarge * 1.5),
-      decoration: BoxDecoration(
-        color: widget.theme.cardColor,
-        borderRadius: BorderRadius.circular(radiusXLarge),
-        border: Border.all(
-          color: widget.isDarkMode
-              ? _primaryColor.withValues(alpha: 0.2)
-              : Colors.black.withValues(alpha: 0.06),
-        ),
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(spacingXLarge),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _primaryColor.withValues(alpha: 0.2),
-                  _primaryColor.withValues(alpha: 0.1),
-                ],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.people_outline_rounded,
-              size: 64,
-              color: _primaryColor.withValues(alpha: 0.5),
-            ),
-          ),
-          const SizedBox(height: spacingLarge),
-          Text(
-            'No patients yet',
-            style: bodyBold.copyWith(
-              color: widget.theme.textColor,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: spacingSmall),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              'When partially sighted users select you as their caretaker, they will appear here automatically',
-              style: body.copyWith(
-                color: widget.theme.subtextColor,
-                fontSize: 14,
-                height: 1.5,
-                fontWeight: FontWeight.w400,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'No patients yet',
+      message:
+          'When partially sighted users select you as their caretaker, they will appear here automatically',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
@@ -555,34 +506,12 @@ class _PatientsContentState extends State<PatientsContent>
     final filteredPatients = _filteredPatients;
 
     if (filteredPatients.isEmpty && _searchQuery.isNotEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 60),
-          child: Column(
-            children: [
-              Icon(
-                Icons.search_off_rounded,
-                size: 64,
-                color: widget.theme.subtextColor.withOpacity(0.3),
-              ),
-              const SizedBox(height: spacingLarge),
-              Text(
-                'No patients found',
-                style: bodyBold.copyWith(
-                  color: widget.theme.textColor,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: spacingSmall),
-              Text(
-                'Try a different search term',
-                style: body.copyWith(
-                  color: widget.theme.subtextColor,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: VistaEmptyState(
+          title: 'No patients found',
+          message: 'Try a different name.',
+          isDarkMode: widget.isDarkMode,
         ),
       );
     }
