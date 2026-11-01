@@ -5,6 +5,8 @@ import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/firebase/caretaker/location_tracking_service.dart';
 import 'communication/screens/caretaker_voice_call_screen.dart';
 import 'communication/screens/caretaker_video_call_screen.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class MyPatientsSection extends StatelessWidget {
   final bool isDarkMode;
@@ -55,38 +57,16 @@ class MyPatientsSection extends StatelessWidget {
                   key: const ValueKey('loading'),
                   child: Padding(
                     padding: EdgeInsets.all(spacingLarge),
-                    child: CircularProgressIndicator(color: primary),
+                    child: VistaLoader(size: 72),
                   ),
                 )
               : assignedPatients.isEmpty
-              ? Container(
+              ? VistaEmptyState(
                   key: const ValueKey('empty'),
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: theme.subtextColor.withOpacity(0.1),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.group_off_rounded,
-                        size: 40,
-                        color: theme.subtextColor.withOpacity(0.5),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'No patients assigned yet',
-                        style: TextStyle(
-                          color: theme.subtextColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                  title: 'No patients yet',
+                  message: 'Patients who choose you appear here.',
+                  isDarkMode: isDarkMode,
+                  mascotSize: 110,
                 )
               : SizedBox(
                   key: const ValueKey('list'),
