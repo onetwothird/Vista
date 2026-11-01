@@ -15,6 +15,7 @@ import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:seelai_app/roles/partially_sighted/home/sections/home_screen/widgets/map_marker_helper.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class MswdLocationTrackingScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -564,9 +565,7 @@ class _MswdLocationTrackingScreenState extends State<MswdLocationTrackingScreen>
           if (_isLoading)
             Container(
               color: Palette.inkSubtle,
-              child: const Center(
-                child: CircularProgressIndicator(color: primary),
-              ),
+              child: const Center(child: VistaLoader(size: 110)),
             ),
         ],
       ),
