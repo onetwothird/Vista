@@ -4,6 +4,8 @@ import 'package:seelai_app/roles/caretaker/home/sections/patients_screen/patient
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
 import 'dart:async';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
+import 'package:seelai_app/shared/widgets/vista_loader.dart';
 
 class SelectPatient extends StatefulWidget {
   final bool isDarkMode;
@@ -165,9 +167,7 @@ class _SelectPatientState extends State<SelectPatient> {
       return Center(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: spacingXLarge),
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(primary),
-          ),
+          child: VistaLoader(size: 96),
         ),
       );
     }
@@ -398,46 +398,11 @@ class _SelectPatientState extends State<SelectPatient> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: spacingXLarge * 2),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(spacingXLarge),
-              decoration: BoxDecoration(
-                color: widget.theme.subtextColor.withOpacity(0.05),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.people_outline_rounded,
-                size: 60,
-                color: widget.theme.subtextColor.withOpacity(0.3),
-              ),
-            ),
-            SizedBox(height: spacingLarge),
-            Text(
-              'No patients to track',
-              style: bodyBold.copyWith(
-                color: widget.theme.textColor,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(height: spacingSmall),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                'Patients will appear here when they select you as their caretaker',
-                style: body.copyWith(
-                  color: widget.theme.subtextColor,
-                  fontSize: 13,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return VistaEmptyState(
+      title: 'No patients to track',
+      message:
+          'Patients will appear here when they select you as their caretaker',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
