@@ -114,9 +114,9 @@ abstract final class VistaTheme {
     );
 
     final controlShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(14),
     );
-    const buttonSize = Size(64, 52);
+    const buttonSize = Size(64, 56);
     final buttonText = textTheme.labelLarge!;
 
     OutlineInputBorder outline(Color c, [double w = 1.5]) => OutlineInputBorder(
@@ -162,9 +162,9 @@ abstract final class VistaTheme {
       dividerTheme: DividerThemeData(color: border, thickness: 1, space: 1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          // Honey on midnight: the Vista pup's own colours.
-          backgroundColor: Palette.honey,
-          foregroundColor: Palette.violetDeep,
+          // Navy by day, honey by night: the strongest pairing either way.
+          backgroundColor: dark ? Palette.honey : Palette.violet,
+          foregroundColor: dark ? Palette.violetDeep : Colors.white,
           disabledBackgroundColor: Palette.raised(dark),
           disabledForegroundColor: muted,
           elevation: 0,
@@ -176,9 +176,8 @@ abstract final class VistaTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          // Honey on midnight: the Vista pup's own colours.
-          backgroundColor: Palette.honey,
-          foregroundColor: Palette.violetDeep,
+          backgroundColor: dark ? Palette.honey : Palette.violet,
+          foregroundColor: dark ? Palette.violetDeep : Colors.white,
           minimumSize: buttonSize,
           padding: const EdgeInsets.symmetric(horizontal: 24),
           shape: controlShape,
@@ -206,9 +205,10 @@ abstract final class VistaTheme {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(minimumSize: const Size(48, 48)),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Palette.signal,
-        foregroundColor: Palette.onSignal,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: dark ? Palette.honey : Palette.violet,
+        foregroundColor: dark ? Palette.violetDeep : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         elevation: 2,
         highlightElevation: 2,
       ),
