@@ -7,6 +7,7 @@ import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/roles/partially_sighted/models/emergency_hotline_model.dart';
 import 'package:seelai_app/firebase/partially_sighted/emergency_hotline_service.dart';
 import 'package:seelai_app/roles/mswd/home/sections/hotlines/mswd_edit_hotline.dart';
+import 'package:seelai_app/shared/widgets/vista_empty_state.dart';
 
 class MswdManageHotlinesScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -317,27 +318,10 @@ class _MswdManageHotlinesScreenState extends State<MswdManageHotlinesScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.contact_phone_rounded,
-            size: 80,
-            color: widget.theme.subtextColor.withValues(alpha: 0.3),
-          ),
-          const SizedBox(height: spacingMedium),
-          Text(
-            'No hotlines configured',
-            style: h3.copyWith(color: widget.theme.textColor),
-          ),
-          const SizedBox(height: spacingSmall),
-          Text(
-            'Add hotlines to broadcast to users.',
-            style: body.copyWith(color: widget.theme.subtextColor),
-          ),
-        ],
-      ),
+    return VistaEmptyState(
+      title: 'No hotlines configured',
+      message: 'Add hotlines to broadcast to users.',
+      isDarkMode: widget.isDarkMode,
     );
   }
 
