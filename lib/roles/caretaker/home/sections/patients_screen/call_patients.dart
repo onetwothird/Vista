@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:seelai_app/themes/palette.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 Future<void> callPatient(BuildContext context, {String? patientName}) async {
   const String phoneNumber = '09385100460';
@@ -13,7 +14,7 @@ Future<void> callPatient(BuildContext context, {String? patientName}) async {
 
   try {
     await flutterTts.setLanguage("en-US");
-    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setSpeechRate(a11y.speechRate);
     await flutterTts.setVolume(1.0);
     await flutterTts.setPitch(1.0);
 
@@ -48,7 +49,7 @@ Future<void> callPatientAlt(BuildContext context) async {
 
   try {
     await flutterTts.setLanguage("en-US");
-    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setSpeechRate(a11y.speechRate);
     await flutterTts.setVolume(1.0);
     await flutterTts.setPitch(1.0);
 
