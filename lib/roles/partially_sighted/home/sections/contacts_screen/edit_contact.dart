@@ -5,6 +5,7 @@ import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:flutter_tts/flutter_tts.dart'; // ADDED TTS
 import 'contact_model.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class EditContactDialog extends StatefulWidget {
   final String patientId;
@@ -48,7 +49,7 @@ class _EditContactDialogState extends State<EditContactDialog> {
 
   Future<void> _initTts() async {
     await _flutterTts.setLanguage("en-US");
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setSpeechRate(a11y.speechRate);
     await _flutterTts.setVolume(1.0);
     await _flutterTts.setPitch(1.0);
   }
