@@ -8,12 +8,13 @@ import 'package:seelai_app/themes/constants.dart';
 import 'package:seelai_app/firebase/firebase_services.dart';
 import 'package:flutter_tts/flutter_tts.dart'; // ADDED TTS
 import 'contact_model.dart';
+import 'package:seelai_app/shared/accessibility.dart';
 
 class MessageContact {
   static Future<void> _speak(String message) async {
     final FlutterTts flutterTts = FlutterTts();
     await flutterTts.setLanguage("en-US");
-    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setSpeechRate(a11y.speechRate);
     await flutterTts.setVolume(1.0);
     await flutterTts.setPitch(1.0);
     await flutterTts.speak(message);
