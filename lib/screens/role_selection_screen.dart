@@ -83,7 +83,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   'Who is using Vista?',
                   style: TextStyle(
                     fontSize: 28,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     height: 1.15,
                     letterSpacing: -0.6,
                     color: Palette.ink,
@@ -116,16 +116,18 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                     ? null
                     : () => _showAuthBottomSheet(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Palette.honey,
-                  foregroundColor: Palette.violetDeep,
+                  backgroundColor: Palette.violet,
+                  foregroundColor: Colors.white,
                   disabledBackgroundColor: Palette.paperSunk,
                   disabledForegroundColor: Palette.inkSubtle,
                   elevation: 0,
-                  shape: const StadiumBorder(),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 child: const Text(
                   'Continue',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -149,21 +151,12 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: selected ? Palette.honeyTint : Palette.surface,
-            borderRadius: BorderRadius.circular(22),
+            color: selected ? Palette.violetTint : Palette.surface,
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: selected ? Palette.honey : Palette.line,
-              width: selected ? 2.5 : 1.2,
+              color: selected ? Palette.violet : Palette.line,
+              width: 2,
             ),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: Palette.honey.withValues(alpha: 0.25),
-                      blurRadius: 18,
-                      offset: const Offset(0, 6),
-                    ),
-                  ]
-                : null,
           ),
           child: Row(
             children: [
@@ -172,12 +165,12 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: selected ? Palette.violetDeep : Palette.honeyTint,
-                  shape: BoxShape.circle,
+                  color: selected ? Palette.violet : Palette.mist,
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   r.icon,
-                  color: selected ? Palette.honey : Palette.violet,
+                  color: selected ? Colors.white : Palette.violet,
                   size: 26,
                 ),
               ),
@@ -190,7 +183,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       r.title,
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: Palette.ink,
                       ),
                     ),
@@ -215,12 +208,12 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   width: 28,
                   height: 28,
                   decoration: const BoxDecoration(
-                    color: Palette.violetDeep,
+                    color: Palette.violet,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.check_rounded,
-                    color: Palette.honey,
+                    color: Colors.white,
                     size: 18,
                   ),
                 ),
@@ -267,7 +260,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
               "Let's get you in",
               style: TextStyle(
                 fontSize: 26,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
                 color: Palette.ink,
               ),
             ),
@@ -287,14 +280,16 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   _navigateToLogin(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Palette.honey,
-                  foregroundColor: Palette.violetDeep,
+                  backgroundColor: Palette.violet,
+                  foregroundColor: Colors.white,
                   elevation: 0,
-                  shape: const StadiumBorder(),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 child: const Text(
                   'Sign in',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -308,13 +303,15 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   _navigateToSignup(context);
                 },
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Palette.violetDeep, width: 1.6),
-                  foregroundColor: Palette.violetDeep,
-                  shape: const StadiumBorder(),
+                  side: const BorderSide(color: Palette.lineStrong, width: 1.5),
+                  foregroundColor: Palette.violet,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 child: const Text(
                   'Create an account',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
